@@ -1,0 +1,7 @@
+ADD_ALL_SUBDIR() #includes
+set(MODE "EXE")
+set(TARGET_NAME "elftp-cli")
+set(STR_TARGET_SOURCES "main.cpp")
+set(STR_TARGET_LIBS " ")
+
+SETUP_PROJECT(${MODE} ${TARGET_NAME} ${STR_TARGET_SOURCES} ${STR_TARGET_LIBS})
