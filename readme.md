@@ -11,12 +11,12 @@ An FTP client tool.
 
 ### Dependences
 
-Complier:
-- GCC (C++11)
-- Visual Studio 2015 or later (msvc included)
+Dev Tools:
+- GCC (C++11) or Visual Studio 2015+ (msvc included)
+- CMake 3.0.0+
 
 VsCode Extentions:
 - **CMake Tools** 1.3.1
 - CMake 0.0.17
-- C/C++ 0.27.1
+- C/C++ 0.28.0
 
