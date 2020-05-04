@@ -11,8 +11,7 @@ void View::MoveCursorTo(int x, int y) {
     SetConsoleCursorPosition(stdHandle, cp);
 }
 
-void View::ColorPrintf(char* str,
-                       WORD cl = FOREGROUND_BLUE | FOREGROUND_INTENSITY) {
+void View::ColorPrintf(char* str, WORD cl) {
     SetConsoleTextAttribute(stdHandle, cl);
     cout << str;
     SetConsoleTextAttribute(stdHandle,
