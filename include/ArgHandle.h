@@ -22,6 +22,7 @@ class Command {
     // 载入参数
     bool Invoke(std::vector<std::string>);
     // 运行
+    // note: 执行前必须使用Invoke
     bool Run();
 };
 
@@ -40,7 +41,7 @@ class ArgHandle : public Singleton<ArgHandle> {
     // 内置命令行模式
     void ReadArgs(bool isLoop = false);
     // 绑定命令
-    bool BindCommand(std::string cmd, int argc, std::function<void(std::vector<std::string>)>&& op_);
+    ArgHandle* BindCommand(std::string cmd, int argc, std::function<void(std::vector<std::string>)>&& op_);
     // 顾名思义
     void Exit();
 };

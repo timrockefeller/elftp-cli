@@ -40,12 +40,12 @@ void ArgHandle::ReadArgs(bool isLoop) {
     } while (isLoop && !this->isEOF);
 }
 
-bool ArgHandle::BindCommand(string cmd,
+ArgHandle* ArgHandle::BindCommand(string cmd,
                             int argc,
                             std::function<void(vector<string>)>&& op_) {
     // 可以在这里加desc
     commands.insert(pair<string, Command*>(cmd,new Command(argc,op_)));
-    return true;// in default
+    return getInstance();// in default
 }
 
 
