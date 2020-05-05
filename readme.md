@@ -20,3 +20,12 @@ VsCode Extentions:
 - CMake 0.0.17
 - C/C++ 0.28.0
 
+### Requirements
+
+- 以命令行或图形界面形式运行程序
+- 要求在客户端中至少实现CWD、LIST、RETR功能。
+- 输出与服务器交互过程中的命令与应答信息，下载指定FTP网站的指定文件。
+
+### License
+
+Copyright 2020 by Kitekii, Cyame, DariusYoung, xuchenyangnb. All Rights Reserved.
