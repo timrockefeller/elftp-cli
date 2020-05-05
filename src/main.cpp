@@ -19,7 +19,6 @@ int main(int argc, char* argv[]) {
         })
         ->BindCommand("echo", 1, [&](vector<string> args) {
             cout << args[0] << endl;
-            ArgHandle::getInstance()->Exit();
         });
 
     if (argc <= 1) {  // FIXME 是否考虑全局模式？

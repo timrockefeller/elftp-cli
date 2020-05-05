@@ -2,8 +2,7 @@
 #include <windows.h>
 
 #include <iostream>
-using namespace std;
-
+#include <string>
 namespace ELFTP {
 
 class View : public Singleton<View> {
@@ -17,8 +16,7 @@ class View : public Singleton<View> {
     // 移动指针
     void MoveCursorTo(int x, int y);
     // 彩色输出
-    void ColorPrintf(char* str,
-                     WORD cl = FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+    void ColorPrintf(char* str, WORD cl = 0 | 0);
 
     /* Draw Functions */
     // 输出一个矩阵边框
@@ -39,8 +37,10 @@ class View : public Singleton<View> {
     // 输出窗体
     void PrintLayout();
     // 输出信息
-    void PrintLog();
+    void PrintLog(char* msg);
     // 输出错误信息
-    void PrintErr();
+    void PrintErr(char* msg);
+    // 输入栏，margin确定是否在固定位置显示
+    void Input(std::string& str, bool margin = false);
 };
 }  // namespace ELFTP

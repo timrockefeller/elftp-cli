@@ -1,7 +1,7 @@
 ﻿#include <View.h>
 
 using namespace ELFTP;
-
+using namespace std;
 void View::Init() {
     stdHandle = GetStdHandle(STD_OUTPUT_HANDLE);
 }
@@ -30,4 +30,18 @@ void View::PrintLayout() {
     while (x-- > 0) {
         ColorPrintf("#", FOREGROUND_BLUE | FOREGROUND_INTENSITY);
     }
+}
+
+void View::PrintErr(char* msg) {
+    ColorPrintf(msg, FOREGROUND_RED);
+}
+
+void View::Input(string& str, bool margin) {
+    if (margin) {
+        CONSOLE_SCREEN_BUFFER_INFO csbi;
+        GetConsoleScreenBufferInfo(stdHandle, &csbi);
+        MoveCursorTo(0, csbi.dwSize.Y - 3);
+    }
+    ColorPrintf("> ");
+    getline(cin, str);
 }
