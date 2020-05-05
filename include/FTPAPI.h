@@ -1,11 +1,9 @@
-#pragma once
+﻿#pragma once
 
 #include <winsock2.h>
 
 #include <iostream>
 #pragma comment(lib, "ws2_32.lib")
-
-typedef signed long ssize_t;
 
 namespace ELFTP {
 
@@ -31,7 +29,7 @@ class FTPAPI {
     static int ftp_sendcmd_re(SOCKET sock,
                               char* cmd,
                               char* re_buf,
-                              ssize_t* len);
+                              signed long* len);
     static int ftp_sendcmd(SOCKET sock, char* cmd);
     static int login_server(SOCKET sock, char* user, char* pwd);
     static void socket_close(int c_sock);
@@ -64,6 +62,6 @@ class FTPAPI {
     //从本地复制文件到服务器 STOR
     static int ftp_local2server(SOCKET c_sock, char* s, char* d, int* size);
     //获取响应码
-    static int ftp_recv(SOCKET sock, char* re_buf, ssize_t* len);
+    static int ftp_recv(SOCKET sock, char* re_buf, signed long* len);
 };
 }  // namespace ELFTP
