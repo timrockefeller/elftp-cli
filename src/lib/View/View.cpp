@@ -42,6 +42,6 @@ void View::Input(string& str, bool margin) {
         GetConsoleScreenBufferInfo(stdHandle, &csbi);
         MoveCursorTo(0, csbi.dwSize.Y - 3);
     }
-    ColorPrintf("> ");
+    ColorPrintf("> ", FOREGROUND_GREEN);
     getline(cin, str);
 }
