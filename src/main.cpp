@@ -20,12 +20,15 @@ int main(int argc, char* argv[]) {
         ->BindCommand("echo", 1, [&](vector<string> args) {
             cout << args[0] << endl;
         })
-        ->BindCommand("jump", 1, [&](vector<string> args) {
-            // 连接ftp服务器
-            // TODO 处理一下登录
-            char ip[20];
-            strcpy(ip, args[0].c_str());
-            FTPAPI::socket_connect(ip, 27);
+        ->BindCommand("jump", 4, [&](vector<string> args) {
+            char ip [16];
+            strcpy(ip,args[0].c_str());
+            char un [30];
+            strcpy(un,args[2].c_str());
+            char pw [30];
+            strcpy(pw,args[3].c_str());
+            SOCKET s = FTPAPI::ftp_connect(ip,atoi(args[1].c_str()),un,pw); //登录到FTP服务器
+            ArgHandle::getInstance()->setSocket(s);
         })
         ->BindCommand("cd", 1, [&](vector<string> args) {
             // TODO CWD相关

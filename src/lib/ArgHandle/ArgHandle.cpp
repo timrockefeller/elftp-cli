@@ -4,6 +4,14 @@
 using namespace ELFTP;
 using namespace std;
 
+void ArgHandle::setSocket(SOCKET s){
+    this->s = s;
+}
+
+SOCKET ArgHandle::getSocket(){
+    return this->s;
+}
+
 void ArgHandle::Parse(const string cmd, const vector<string> argv) {
     map<string, Command*>::iterator iter = commands.find(cmd);
     if (iter != commands.end())

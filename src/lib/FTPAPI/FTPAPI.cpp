@@ -2,7 +2,7 @@
 #include <stdio.h>
 #pragma comment(lib, "ws2_32.lib")
 using namespace ELFTP;
-const int BUFSIZE =50;
+const int BUFSIZE =2048;
 SOCKET FTPAPI::socket_connect(char* host, int port) {
     int i = 0;
     //初始化 Socket dll
