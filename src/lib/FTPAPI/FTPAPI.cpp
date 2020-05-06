@@ -58,7 +58,7 @@ SOCKET FTPAPI::socket_connect(char* host, int port) {
 SOCKET FTPAPI::connect_server(char *host, int port)
 {
     SOCKET ctrl_sock;
-    char buf[BUFSIZE];
+    char buf[BUFSIZE] = "";
     int result;
     signed long len;
 
@@ -90,7 +90,7 @@ SOCKET FTPAPI::connect_server(char *host, int port)
  * */
 int FTPAPI::ftp_sendcmd_re(SOCKET sock, char *cmd, char *re_buf, signed long *len)
 {
-    char buf[BUFSIZE];
+    char buf[BUFSIZE] = "";
     signed long r_len;
     if(send(sock, cmd, strlen(cmd), 0) == -1)
     {
@@ -113,7 +113,7 @@ int FTPAPI::ftp_sendcmd_re(SOCKET sock, char *cmd, char *re_buf, signed long *le
  * */
 int FTPAPI::ftp_sendcmd(SOCKET sock, char *cmd)
 {
-    char buf[BUFSIZE];
+    char buf[BUFSIZE] = "";
     int result;
     signed long len;
     printf("FTP Client: %s", cmd);
@@ -132,7 +132,7 @@ int FTPAPI::ftp_sendcmd(SOCKET sock, char *cmd)
  * */
 int FTPAPI::login_server(SOCKET sock, char *user, char *pwd)
 {
-    char buf[BUFSIZE];
+    char buf[BUFSIZE] = "";
     int result;
     sprintf(buf, "USER %s\r\n", user);
     //这里要对socket进行阻塞
@@ -208,7 +208,7 @@ int FTPAPI::ftp_quit(SOCKET sock)
  * */
 int FTPAPI::ftp_type(SOCKET sock, char mode)
 {
-    char buf[BUFSIZ];
+    char buf[BUFSIZE] = "";
     sprintf(buf,"TYPE %c\r\n", mode);
     if(FTP_SUCCESS != ftp_sendcmd(sock, buf))
         return -1;
@@ -222,7 +222,7 @@ int FTPAPI::ftp_type(SOCKET sock, char mode)
  * */
 int FTPAPI::ftp_cwd(SOCKET sock, char *path)
 {
-    char buf[BUFSIZE];
+    char buf[BUFSIZE] = "";
     int result;
     sprintf(buf, "CWD %s\r\n", path);
     result = ftp_sendcmd(sock, buf);
@@ -252,7 +252,7 @@ int FTPAPI::ftp_cdup(SOCKET sock)
  * */
 int FTPAPI::ftp_mkd(SOCKET sock, char *path)
 {
-    char buf[BUFSIZE];
+    char buf[BUFSIZE] = "";
     int result;
     sprintf(buf, "MKD %s\r\n", path);
     result = ftp_sendcmd(sock, buf);
@@ -275,8 +275,8 @@ SOCKET FTPAPI::ftp_pasv_connect(SOCKET c_sock)
     int send_result;
     signed long len;
     int addr[6]; //IP*4+Port*2
-    char buf[BUFSIZE];
-    char result_buf[BUFSIZE];
+    char buf[BUFSIZE] = "";
+    char result_buf[BUFSIZE] = "";
 
     //设置PASV被动模式
     memset(buf,sizeof(buf),0);
@@ -305,7 +305,7 @@ SOCKET FTPAPI::ftp_pasv_connect(SOCKET c_sock)
 int FTPAPI::ftp_list(SOCKET c_sock, char *path, char **data, int *data_len)
 {
     SOCKET r_sock;
-    char buf[BUFSIZE];
+    char buf[BUFSIZE] = "";
     int send_re;
     int result;
     signed long len,buf_len,total_len;
@@ -361,7 +361,7 @@ int FTPAPI::ftp_list(SOCKET c_sock, char *path, char **data, int *data_len)
  * */
 int FTPAPI::ftp_deletefolder(SOCKET sock, char *path)
 {
-    char buf[BUFSIZE];
+    char buf[BUFSIZE] ="";
     int result;
     sprintf(buf,"RMD %s\r\n", path);
     result = ftp_sendcmd(sock, buf);
@@ -380,7 +380,7 @@ int FTPAPI::ftp_deletefolder(SOCKET sock, char *path)
  * */
 int FTPAPI::ftp_deletefile(SOCKET sock, char *filename)
 {
-    char buf[BUFSIZE];
+    char buf[BUFSIZE] = "";
     int result;
     sprintf(buf, "DELE %s\r\n", filename);
     result = ftp_sendcmd(sock, buf);
@@ -398,7 +398,7 @@ int FTPAPI::ftp_deletefile(SOCKET sock, char *filename)
  * */
 int FTPAPI::ftp_renamefile(SOCKET sock, char *s, char *d)
 {
-    char buf[BUFSIZE];
+    char buf[BUFSIZE] = "";
     int result;
     sprintf(buf, "RNFR %s\r\n", s);
     result = ftp_sendcmd(sock, buf);
@@ -422,7 +422,7 @@ int FTPAPI::ftp_server2local(SOCKET c_sock, char *s, char *d, int * size)
 {
     SOCKET d_sock;
     signed long len,write_len;
-    char buf[BUFSIZ];
+    char buf[BUFSIZE] = "";
     int result;
     *size=0;
     //打开本地文件
@@ -497,7 +497,7 @@ int FTPAPI::ftp_local2server(SOCKET c_sock, char *s, char *d, int * size)
 {
     SOCKET d_sock;
     signed long len,send_len;
-    char buf[BUFSIZE];
+    char buf[BUFSIZE] = "";
     FILE * fp;
     int send_re;
     int result;
@@ -566,7 +566,7 @@ int FTPAPI::ftp_local2server(SOCKET c_sock, char *s, char *d, int * size)
  * */
 int FTPAPI::ftp_recv(SOCKET sock, char *re_buf, signed long *len)
 {
-    char buf[BUFSIZE];
+    char buf[BUFSIZE] = "";
     signed long r_len;
     int timeout = 3000;
     setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO, (char *)&timeout, sizeof(timeout));
