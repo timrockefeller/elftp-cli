@@ -2,7 +2,6 @@
 
 using namespace ELFTP;
 
-
 SOCKET FTPAPI::socket_connect(char* host, int port) {
     int i = 0;
     //初始化 Socket dll
@@ -29,7 +28,7 @@ SOCKET FTPAPI::socket_connect(char* host, int port) {
     //创建Socket
     SOCKET s = socket(AF_INET, SOCK_STREAM, 0);  // TCP socket
     if (SOCKET_ERROR == s) {
-        printf("Create Socket Error!");
+        std::cout << "Create Socket Error!" << std::endl;
         exit(1);
     }
     //设置超时连接
@@ -45,8 +44,8 @@ SOCKET FTPAPI::socket_connect(char* host, int port) {
     address.sin_port = htons((unsigned short)port);
     //连接
     if (SOCKET_ERROR == connect(s, (LPSOCKADDR)&address, sizeof(address))) {
-        printf("Can Not Connect To Server IP!\n");
-        exit(1);
+        std::cout << "Can Not Connect To Server IP!\n";
+        return 0;
     }
     return s;
 }

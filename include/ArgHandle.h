@@ -1,4 +1,5 @@
 #include <Singleton.h>
+#include <FTPAPI.h>
 
 #include <functional>
 #include <map>

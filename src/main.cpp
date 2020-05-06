@@ -19,6 +19,11 @@ int main(int argc, char* argv[]) {
         })
         ->BindCommand("echo", 1, [&](vector<string> args) {
             cout << args[0] << endl;
+        })
+        ->BindCommand("jump", 1, [&](vector<string> args) {
+            char ip[20];
+            strcpy(ip, args[0].c_str());
+            FTPAPI::socket_connect(ip, 27);
         });
 
     if (argc <= 1) {  // FIXME 是否考虑全局模式？

@@ -34,7 +34,7 @@ class FTPAPI {
     static int login_server(SOCKET sock, char* user, char* pwd);
     static void socket_close(int c_sock);
 
-    /**********可用命令*********/
+    /* 可用命令 */
     //连接到服务器
     static SOCKET ftp_connect(char* host, int port, char* user, char* pwd);
     //断开连接
@@ -63,5 +63,8 @@ class FTPAPI {
     static int ftp_local2server(SOCKET c_sock, char* s, char* d, int* size);
     //获取响应码
     static int ftp_recv(SOCKET sock, char* re_buf, signed long* len);
+
+    
+
 };
 }  // namespace ELFTP
