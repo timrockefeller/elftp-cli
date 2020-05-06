@@ -1,5 +1,6 @@
 #include <FTPAPI.h>
-
+#include <stdio.h>
+#pragma comment(lib, "ws2_32.lib")
 using namespace ELFTP;
 const int BUFSIZE =50;
 SOCKET FTPAPI::socket_connect(char* host, int port) {
@@ -59,7 +60,7 @@ SOCKET FTPAPI::connect_server(char *host, int port)
     SOCKET ctrl_sock;
     char buf[BUFSIZE];
     int result;
-    ssize_t len;
+    signed long len;
 
     ctrl_sock = FTPAPI::socket_connect(host,port);
     if(-1 == ctrl_sock)
@@ -307,7 +308,7 @@ int FTPAPI::ftp_list(SOCKET c_sock, char *path, char **data, int *data_len)
     char buf[BUFSIZE];
     int send_re;
     int result;
-    ssize_t len,buf_len,total_len;
+    signed long len,buf_len,total_len;
 
     //连接到PASV接口
     r_sock = ftp_pasv_connect(c_sock);
@@ -420,7 +421,7 @@ int FTPAPI::ftp_renamefile(SOCKET sock, char *s, char *d)
 int FTPAPI::ftp_server2local(SOCKET c_sock, char *s, char *d, int * size)
 {
     SOCKET d_sock;
-    ssize_t len,write_len;
+    signed long len,write_len;
     char buf[BUFSIZ];
     int result;
     *size=0;
@@ -495,7 +496,7 @@ int FTPAPI::ftp_server2local(SOCKET c_sock, char *s, char *d, int * size)
 int FTPAPI::ftp_local2server(SOCKET c_sock, char *s, char *d, int * size)
 {
     SOCKET d_sock;
-    ssize_t len,send_len;
+    signed long len,send_len;
     char buf[BUFSIZE];
     FILE * fp;
     int send_re;
