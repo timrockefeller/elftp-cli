@@ -31,8 +31,10 @@ class ArgHandle : public Singleton<ArgHandle> {
    protected:
     bool isEOF = false;
     std::map<std::string, Command*> commands;
-
+    SOCKET s;
    public:
+    void setSocket(SOCKET s);
+    SOCKET getSocket();
     // final参数部署
     void Parse(const std::string cmd, const std::vector<std::string> argv);
     // 来自run arg的参数，旨在运行一次就结束
