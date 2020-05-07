@@ -45,7 +45,13 @@ int main(int argc, char* argv[]) {
             // args[0] - source
             // args[1] - target:以"/"结尾意味着直接放入文件夹，其他情况就改名如何
             // 也要处理一下目录问题
-
+            int size;
+            char Sou[50];
+            strcpy(Sou, args[0].c_str());
+            char Tar[50];
+            strcpy(Tar, args[1].c_str());
+            SOCKET s = ArgHandle::getInstance()->getSocket();
+            FTPAPI::ftp_server2local(s, Sou, Tar, &size);
         });
 
     if (argc <= 1) {  // FIXME 是否考虑全局模式？
