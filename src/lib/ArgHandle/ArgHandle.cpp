@@ -13,15 +13,15 @@ SOCKET ArgHandle::getSocket(){
 }
 
 void ArgHandle::Parse(const string cmd, const vector<string> argv) {
+    // TODO 重载指令函数？
     map<string, Command*>::iterator iter = commands.find(cmd);
     if (iter != commands.end())
         if (iter->second->Invoke(argv))
             iter->second->Run();
         else
-            ;  // View::getInstance()->PrintErr("invalid number of
-               // argument!\n");
+            View::getInstance()->PrintErr("Invalid number of argument!\n");
     else
-        ;  // View::getInstance()->PrintErr("Unknow Command\n");
+        View::getInstance()->PrintErr("Unknow Command\n");
 }
 
 void ArgHandle::Parse(int argc, char** argv) {
