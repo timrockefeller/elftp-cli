@@ -2,7 +2,7 @@ add_subdirectory (lib) #includes
 add_subdirectory (test) #wip tests
 
 set(MODE "EXE")
-set(TARGET_NAME "elftp-cli")
+set(TARGET_NAME "elftp")
 
 file(GLOB ALL_SOURCES
 	"${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
