@@ -13,7 +13,6 @@ SOCKET ArgHandle::getSocket(){
 }
 
 void ArgHandle::Parse(const string cmd, const vector<string> argv) {
-    // TODO 重载指令函数？
     map<string, Command*>::iterator iter = commands.find(cmd);
     if (iter != commands.end())
         if (iter->second->Invoke(argv))
@@ -88,9 +87,14 @@ void ArgHandle::ReadArgs(bool isLoop) {
 
 ArgHandle* ArgHandle::BindCommand(string cmd,
                                   int argc,
-                                  std::function<void(vector<string>)>&& op_) {
+                                  std::function<void(vector<string>)>&& op_,
+                                  vector<string> autofill) {
     // 可以在这里加desc
-    commands.insert(pair<string, Command*>(cmd, new Command(argc, op_)));
+    Command* c = new Command(argc, op_);
+    if(autofill.size()!=0){
+        c->LoadAutofill(autofill);
+    }
+    commands.insert(pair<string, Command*>(cmd, c));
     return getInstance();  // in default
 }
 
