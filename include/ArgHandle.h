@@ -33,7 +33,7 @@ class ArgHandle : public Singleton<ArgHandle> {
    protected:
     bool isEOF = false;
     std::map<std::string, Command*> commands;
-    SOCKET s;
+    SOCKET s = 0;
    public:
     void setSocket(SOCKET s);
     SOCKET getSocket();
