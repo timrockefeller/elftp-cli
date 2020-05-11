@@ -83,7 +83,6 @@ int main(int argc, char* argv[]) {
             SOCKET s = ArgHandle::getInstance()->getSocket();
             FTPAPI::ftp_server2local(s, Sou, Tar, &size);
         }, {"./"});
-
     cout << "ELFTP " << VERSION << endl;
     
     if (argc <= 1) {  // FIXME 是否考虑全局模式？
