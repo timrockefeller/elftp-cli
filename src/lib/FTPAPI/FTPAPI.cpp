@@ -1,7 +1,9 @@
 #include <FTPAPI.h>
 #include <stdio.h>
+#include <string.h>
 #pragma comment(lib, "ws2_32.lib")
 using namespace ELFTP;
+using namespace std;
 const int BUFSIZE =2048;
 SOCKET FTPAPI::socket_connect(char* host, int port) {
     int i = 0;
@@ -422,15 +424,27 @@ int FTPAPI::ftp_server2local(SOCKET c_sock, char *s, char *d, int * size)
 {
     SOCKET d_sock;
     signed long len,write_len;
-    char buf[BUFSIZE] = "";
+    char buf[BUFSIZE]="";
     int result;
     *size=0;
     //打开本地文件
     FILE * fp = fopen(d, "wb");
     if(NULL == fp)
     {
-        printf("Can't Open the file.\n");
-        return -1;
+        // printf("Can't Open the file.\n");
+        //return -1;
+        string d_str = string(d);
+        if(d_str.back() == '/'){
+            d_str = d_str + string(s);
+            system(("type nul>" + d_str).c_str());
+            fp = fopen(d_str.c_str(), "wb");
+            if(NULL == fp){
+                printf("Failed to create file!\n");
+            }
+            else{
+                printf("File created successfully!\n");
+            }
+        }
     }
     //设置传输模式
     ftp_type(c_sock,'I');
