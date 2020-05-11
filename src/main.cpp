@@ -18,11 +18,11 @@ int main(int argc, char* argv[]) {
             cout << "ELFTP client commands:" << endl << endl;
             cout << " jump   <ip> <port> [un] [pw]  --- Connect to a server." << endl;
             cout << "   ls   [dir]                  --- List all files at cwd on server." << endl;
-            //cout << "  !ls   [dir]                  --- List all files at cwd on client." << endl;
+            cout << "  lls   [dir]                  --- List all files at cwd on client." << endl;
             cout << "   cd   <dir>                  --- Change current working directory on server." << endl;
-            //cout << "  !cd   <dir>                  --- Change current working directory on client." << endl;
+            cout << "  lcd   <dir>                  --- Change current working directory on client." << endl;
             cout << "  pwd                          --- Show current working directory on server." << endl;
-            //cout << " !pwd                          --- Show current working directory on client." << endl;
+            cout << " lpwd                          --- Show current working directory on client." << endl;
             cout << "  get   <filename> [target]    --- Download a file from server." << endl;
             //cout << "  put   <filename> [target]    --- Upload a file to server." << endl;
             cout << " exit                          --- Exit the client." << endl;
