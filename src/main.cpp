@@ -62,29 +62,52 @@ int main(int argc, char* argv[]) {
             //current_dict = 
 
         })
-        ->BindCommand("!cd", 1, [&](vector<string> args) {
+        ->BindCommand("lcd", 1, [&](vector<string> args) {
             // TODO CWD相关
             // 要分析 . 和 .. 还有相对目录问题，可能要一个静态类存这些东西
-            char current_dict[256] = "/";
-            _getcwd(current_dict,sizeof(current_dict));
+            //char current_dict[256] = "/";
+            //_wgetcwd(current_dict,sizeof(current_dict));
+            char command[60] = "";
+            strcat(command,"cd ");
+            strcat(command,args[0].c_str());
+            cout<<"LOCAL: "<<command<<endl;
+            system(command);
 
         })
         ->BindCommand("ls", 1, [&](vector<string> args) {
             // TODO LIST相关
             // args[0] - relative directory = "."
             // 列出内容呗
+            SOCKET s = ArgHandle::getInstance()->getSocket();
+            char command[60] = "";
+            strcat(command,"ls ");
+            strcat(command,args[0].c_str());
+            FTPAPI::ftp_sendcmd(s,command);
 
         }, {"."})
-        ->BindCommand("!ls", 0, [&](vector<string> args) {
-            // TODO LIST相关
-            // args[0] - relative directory = "."
-            // 列出内容呗
-            system("ls");
+        ->BindCommand("lls", 1, [&](vector<string> args) {
+            
+            char command[60] = "";
+            strcat(command,"ls ");
+            strcat(command,args[0].c_str());
+            cout<<"LOCAL: "<<command<<endl;
+            system(command);
+
         }, {"."})
         ->BindCommand("pwd", 0, [&](vector<string> args) {
             // TODO PWD相关
             // 打印当前目录
-            
+            SOCKET s = ArgHandle::getInstance()->getSocket();
+            // char command[60] = "";
+            // strcat(command,"ls ");
+            // strcat(command,args[0].c_str());
+            FTPAPI::ftp_sendcmd(s,"pwd");
+        })
+        ->BindCommand("lpwd", 0, [&](vector<string> args) {
+            // TODO PWD相关
+            // 打印当前目录
+            cout<<"LOCAL: pwd"<<endl;
+            system("dir");
         })
         ->BindCommand("get", 2, [&](vector<string> args) {
             // TODO RETR文件下载
