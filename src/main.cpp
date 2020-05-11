@@ -107,7 +107,7 @@ int main(int argc, char* argv[]) {
             // TODO PWD相关
             // 打印当前目录
             cout<<"LOCAL: pwd"<<endl;
-            system("dir");
+            system("chdir");
         })
         ->BindCommand("get", 2, [&](vector<string> args) {
             // TODO RETR文件下载
