@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <winsock2.h>
 #pragma comment(lib, "ws2_32.lib")
-void main(int argc, char *argv[]) {
+int main(int argc, char *argv[]) {
 
     //initiate Winsock
     WSADATA wsaData;
@@ -17,7 +17,7 @@ void main(int argc, char *argv[]) {
     if ( welcomeSocket == INVALID_SOCKET ) {
         printf( "Error at socket(): %ld\n", WSAGetLastError() );
         WSACleanup();
-        return;
+        return 0;
     }
 
     //bind server socket with the port and ip address
@@ -30,7 +30,7 @@ void main(int argc, char *argv[]) {
     if ( bind( welcomeSocket, (SOCKADDR*) &service, sizeof(service) ) == SOCKET_ERROR ) {
         printf( "bind() failed.\n" );
         closesocket(welcomeSocket);
-        return;
+        return 0;
     }
     
     //listening socket binded with port
@@ -68,6 +68,6 @@ void main(int argc, char *argv[]) {
  
      }
     
-    return;
+    return 0;
 }
 
