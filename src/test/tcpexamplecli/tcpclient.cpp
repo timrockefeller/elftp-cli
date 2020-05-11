@@ -4,7 +4,7 @@
 #include <string>
 using namespace std;
 #pragma comment(lib, "ws2_32.lib")
-void main(int argc, char *argv[]) {
+int main(int argc, char *argv[]) {
 
     //initialize Winsock.
     WSADATA wsaData;
@@ -19,7 +19,7 @@ void main(int argc, char *argv[]) {
     if ( client == INVALID_SOCKET ) {
         printf( "Error at socket(): %ld\n", WSAGetLastError() );
         WSACleanup();
-        return;
+        return 0;
     }
 
     //set up the connection
@@ -32,7 +32,7 @@ void main(int argc, char *argv[]) {
     if ( connect( client, (SOCKADDR*) &clientService, sizeof(clientService) ) == SOCKET_ERROR) {
         printf( "Failed to connect.\n" );
         WSACleanup();
-        return;
+        return 0;
     }
 
     //send and recieve data
@@ -53,10 +53,10 @@ void main(int argc, char *argv[]) {
             break;
         }
         if (bytesRecv < 0)
-            return;
+            return 0;
         printf( "Recv %ld bytes:%s\n", bytesRecv, recvbuf );
     }
 
     closesocket(client);
-    return;
+    return 0;
 }
