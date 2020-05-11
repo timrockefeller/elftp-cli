@@ -82,7 +82,7 @@ int main(int argc, char* argv[]) {
             char command[60] = "";
             strcat(command,"ls ");
             strcat(command,args[0].c_str());
-            FTPAPI::ftp_sendcmd(s,command);
+            FTPAPI::ftp_sendcmd_re(s,command);
 
         }, {"."})
         ->BindCommand("lls", 1, [&](vector<string> args) {
@@ -101,7 +101,7 @@ int main(int argc, char* argv[]) {
             // char command[60] = "";
             // strcat(command,"ls ");
             // strcat(command,args[0].c_str());
-            FTPAPI::ftp_sendcmd(s,"pwd");
+            FTPAPI::ftp_sendcmd_re(s,"pwd");
         })
         ->BindCommand("lpwd", 0, [&](vector<string> args) {
             // TODO PWD相关
