@@ -2,6 +2,7 @@
 #include <FTPAPI.h>
 #include <View.h>
 
+//#include "stdafx.h"
 using namespace std;
 using namespace ELFTP;
 
@@ -27,7 +28,8 @@ int main(int argc, char* argv[]) {
             cout << " exit                          --- Exit the client." << endl;
             cout << endl;
         })
-        ->BindCommand("exit", 0, [&](vector<string> args) {
+        //和通用客户端统一
+        ->BindCommand("bye", 0, [&](vector<string> args) {
             cout << "Bye!" << endl;
             ArgHandle::getInstance()->Exit();
         })
@@ -57,6 +59,14 @@ int main(int argc, char* argv[]) {
         ->BindCommand("cd", 1, [&](vector<string> args) {
             // TODO CWD相关
             // 要分析 . 和 .. 还有相对目录问题，可能要一个静态类存这些东西
+            //current_dict = 
+
+        })
+        ->BindCommand("!cd", 1, [&](vector<string> args) {
+            // TODO CWD相关
+            // 要分析 . 和 .. 还有相对目录问题，可能要一个静态类存这些东西
+            char current_dict[256] = "/";
+            _getcwd(current_dict,sizeof(current_dict));
 
         })
         ->BindCommand("ls", 1, [&](vector<string> args) {
@@ -64,6 +74,12 @@ int main(int argc, char* argv[]) {
             // args[0] - relative directory = "."
             // 列出内容呗
 
+        }, {"."})
+        ->BindCommand("!ls", 0, [&](vector<string> args) {
+            // TODO LIST相关
+            // args[0] - relative directory = "."
+            // 列出内容呗
+            system("ls");
         }, {"."})
         ->BindCommand("pwd", 0, [&](vector<string> args) {
             // TODO PWD相关
