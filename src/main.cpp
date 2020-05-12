@@ -26,7 +26,7 @@ int main(int argc, char* argv[]) {
             cout << " lpwd                          --- Show current working directory on client." << endl;
             cout << "  get   <filename> [target]    --- Download a file from server." << endl;
             //cout << "  put   <filename> [target]    --- Upload a file to server." << endl;
-            cout << " exit                          --- Exit the client." << endl;
+            cout << "  bye                          --- Exit the client." << endl;
             cout << endl;
         })
         //和通用客户端统一
@@ -89,13 +89,20 @@ int main(int argc, char* argv[]) {
             // args[0] - relative directory = "."
             // 列出内容呗
 
-            /*
+            
             SOCKET s = ArgHandle::getInstance()->getSocket();
             char command[60] = "";
             strcat(command,"ls ");
             strcat(command,args[0].c_str());
-            FTPAPI::ftp_sendcmd_re(s,command);
-            */
+            //FTPAPI::ftp_sendcmd_re(s,command,"In current Dictionary:\n",1024);
+            // int* p;
+            // *p = 1025;
+            try{
+                FTPAPI::ftp_sendcmd(s,command);
+            }
+            catch (exception& e){
+                cout << "Exit with exception: " << e.what() << endl;
+            }
 
         }, {"."})
         ->BindCommand("lls", 1, [&](vector<string> args) {
@@ -112,10 +119,15 @@ int main(int argc, char* argv[]) {
             // TODO PWD相关
             // 打印当前目录
             SOCKET s = ArgHandle::getInstance()->getSocket();
+            if(s == 0){
+                cout<<"You haven't connect to server yet."<<endl;
+            }else{
+
+            }
             // char command[60] = "";
             // strcat(command,"ls ");
             // strcat(command,args[0].c_str());
-            // FTPAPI::ftp_sendcmd_re(s,"pwd");
+            FTPAPI::ftp_sendcmd(s,"pwd");
         })
         ->BindCommand("lpwd", 0, [&](vector<string> args) {
             // TODO PWD相关
