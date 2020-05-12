@@ -79,7 +79,7 @@ SOCKET FTPAPI::connect_server(char *host, int port)
 
     if(FTPAPI::FTP_SERVICE_READY != result)
     {
-        printf("FTP Not ready, Close the socet.");
+        printf("FTP Not Ready, Close The Socket.");
         closesocket(ctrl_sock); //关闭Socket
         return -1;
     }

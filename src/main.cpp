@@ -1,7 +1,8 @@
 #include <ArgHandle.h>
 #include <FTPAPI.h>
 #include <View.h>
-
+#include <windows.h>
+#include <exception>
 //#include "stdafx.h"
 using namespace std;
 using namespace ELFTP;
@@ -67,30 +68,43 @@ int main(int argc, char* argv[]) {
             // 要分析 . 和 .. 还有相对目录问题，可能要一个静态类存这些东西
             //char current_dict[256] = "/";
             //_wgetcwd(current_dict,sizeof(current_dict));
-            char command[60] = "";
-            strcat(command,"cd ");
-            strcat(command,args[0].c_str());
-            cout<<"LOCAL: "<<command<<endl;
-            system(command);
+            char cDict[1024] = "";
+            GetCurrentDirectory(1024,cDict);
+            std::string a = "";
+            try{
+                a.assign(cDict);
+                a.append("\\");
+                a.append(args[0].c_str());
+                cout<<"LOCAL: GOTO -> "<<a.c_str()<<endl;
+                SetCurrentDirectory(a.c_str());
+            }
+            catch (exception& e){
+                cout<<"==WRONG PATH=="<<endl;
+                cout << "Exit with exception: " << e.what() << endl;
+            }
 
         })
         ->BindCommand("ls", 1, [&](vector<string> args) {
             // TODO LIST相关
             // args[0] - relative directory = "."
             // 列出内容呗
+
+            /*
             SOCKET s = ArgHandle::getInstance()->getSocket();
             char command[60] = "";
             strcat(command,"ls ");
             strcat(command,args[0].c_str());
             FTPAPI::ftp_sendcmd_re(s,command);
+            */
 
         }, {"."})
         ->BindCommand("lls", 1, [&](vector<string> args) {
             
-            char command[60] = "";
+            char command[1024] = "";
             strcat(command,"ls ");
             strcat(command,args[0].c_str());
-            cout<<"LOCAL: "<<command<<endl;
+            //cout<<cDict<<endl;
+            cout<<"LOCAL: Content of Current Dictionary"<<endl;
             system(command);
 
         }, {"."})
@@ -101,13 +115,14 @@ int main(int argc, char* argv[]) {
             // char command[60] = "";
             // strcat(command,"ls ");
             // strcat(command,args[0].c_str());
-            FTPAPI::ftp_sendcmd_re(s,"pwd");
+            // FTPAPI::ftp_sendcmd_re(s,"pwd");
         })
         ->BindCommand("lpwd", 0, [&](vector<string> args) {
             // TODO PWD相关
             // 打印当前目录
-            cout<<"LOCAL: pwd"<<endl;
-            system("chdir");
+            char cDict[1024] = "";
+            GetCurrentDirectory(1024,cDict);
+            cout<<cDict<<endl;
         })
         ->BindCommand("get", 2, [&](vector<string> args) {
             // TODO RETR文件下载
