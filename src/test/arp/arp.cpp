@@ -203,7 +203,7 @@ int GetSelfMac() {
 }
 
 //Send arp request
-unsigned int sendArpPacket(void* arglist){
+unsigned int __stdcall sendArpPacket(void* arglist){
 	unsigned char sendbuf[42];
 	unsigned long ip;
 	const char iptosendh[20] = {0};
@@ -250,7 +250,7 @@ unsigned int sendArpPacket(void* arglist){
 }
 
 //Get ARP related thread
-unsigned int GetlivePc(void* arglist) {
+unsigned int __stdcall GetlivePc(void* arglist) {
     int res;
     int aliveNum = 0;
 
