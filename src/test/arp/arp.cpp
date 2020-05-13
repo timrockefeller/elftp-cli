@@ -3,6 +3,7 @@
 #include <tchar.h>
 
 #include <iostream>
+#include <WinSock2.h>
 #define HAVE_REMOTE
 #include <pcap.h>
 #include <process.h>
@@ -22,27 +23,27 @@ using namespace std;
 #define ARP_HARDWARE 0X0001
 #define max_num_adapter 10
 
-// arpÖ¡½á¹¹
+// arpå¸§ç»“æ„
 struct arp_head {
-    unsigned short hardware_type;     //Ó²¼şÀàĞÍ
-    unsigned short protocol_type;     //Ğ­ÒéÀàĞÍ
-    unsigned char hardware_add_len;   //Ó²¼şµØÖ·³¤¶È
-    unsigned char protocol_add_len;   //Ğ­ÒéµØÖ·³¤¶È
-    unsigned short operation_field;   //²Ù×÷×Ö¶Î
-    unsigned char source_mac_add[6];  //Ô´macµØÖ·
-    unsigned long source_ip_add;      //Ô´ipµØÖ·
-    unsigned char dest_mac_add[6];    //Ä¿µÄmacµØÖ·
-    unsigned long dest_ip_add;        //Ä¿µÄipµØÖ·
+    unsigned short hardware_type;     //ç¡¬ä»¶ç±»å‹
+    unsigned short protocol_type;     //åè®®ç±»å‹
+    unsigned char hardware_add_len;   //ç¡¬ä»¶åœ°å€é•¿åº¦
+    unsigned char protocol_add_len;   //åè®®åœ°å€é•¿åº¦
+    unsigned short operation_field;   //æ“ä½œå­—æ®µ
+    unsigned char source_mac_add[6];  //æºmacåœ°å€
+    unsigned long source_ip_add;      //æºipåœ°å€
+    unsigned char dest_mac_add[6];    //ç›®çš„macåœ°å€
+    unsigned long dest_ip_add;        //ç›®çš„ipåœ°å€
 };
 
-//ÒÔÌ«ÍøÖ¡
+//ä»¥å¤ªç½‘å¸§
 struct ethernet_head {
     unsigned char dest_mac_add[6];
     unsigned char source_mac_add[6];
-    unsigned short type;  // Ö¡ÀàĞÍ
+    unsigned short type;  // å¸§ç±»å‹
 };
 
-// arpÊı¾İ°ü
+// arpæ•°æ®åŒ…
 struct arp_packet {
     ethernet_head eh;
     arp_head ah;
@@ -61,13 +62,13 @@ unsigned int HostNum = 0;
 int flag = FALSE;
 HANDLE mThread;
 
-//ÌáÊ¾ĞÅÏ¢
+//æç¤ºä¿¡æ¯
 void warmMessage() {
-    std::cout << "Èç¹ûÄãÏëÒªÊ¹ÓÃÕâ¸ö³ÌĞò£¬Äã±ØĞë°²×°ÁËwinpcap" << std::endl;
+    std::cout << "å¦‚æœä½ æƒ³è¦ä½¿ç”¨è¿™ä¸ªç¨‹åºï¼Œä½ å¿…é¡»å®‰è£…äº†winpcap" << std::endl;
     return;
 }
 
-//´ò¿ªÍø¿¨
+//æ‰“å¼€ç½‘å¡
 int OpenIF() {
     int j = 0;
     int inum = 0;
@@ -75,48 +76,48 @@ int OpenIF() {
     pcap_if_t* alldevs;
     pcap_if_t* d;
 
-    /*»ñÈ¡Íø¿¨ÁĞ±í*/
+    /*è·å–ç½‘å¡åˆ—è¡¨*/
     if (pcap_findalldevs_ex(PCAP_SRC_IF_STRING, NULL, &alldevs, errbuf) == -1) {
-        cout << "»ñÈ¡Íø¿¨ÁĞ±íÊ§°Ü" << endl;
+        cout << "è·å–ç½‘å¡åˆ—è¡¨å¤±è´¥" << endl;
         exit(1);
     }
 
-    /*´òÓ¡Íø¿¨ĞÅÏ¢*/
+    /*æ‰“å°ç½‘å¡ä¿¡æ¯*/
     for (d = alldevs; d != NULL; d = d->next) {
         cout << ++j << "      " << d->name << endl;
         if (d->description)
             cout << d->description << endl;
         else
-            cout << "¸ÃÉè±¸Ã»ÓĞÃèÊö" << endl;
+            cout << "è¯¥è®¾å¤‡æ²¡æœ‰æè¿°" << endl;
         cout << "\n\n"
              << endl;
     }
 
     if (j == 0) {
-        cout << "ÎŞ·¨ÕÒ´òÍø¿¨Éè±¸" << endl;
+        cout << "æ— æ³•æ‰¾æ‰“ç½‘å¡è®¾å¤‡" << endl;
         return -1;
     }
 
-    cout << "ÇëÑ¡ÔñÍø¿¨Éè±¸:"
+    cout << "è¯·é€‰æ‹©ç½‘å¡è®¾å¤‡:"
          << "1-" << j << endl;
     cin >> inum;
     if (inum < 1 || inum > j) {
-        cout << "Ñ¡Ïî´íÎó£¬Ã»ÓĞ¸ÃÑ¡ÏîµÄÍø¿¨" << endl;
+        cout << "é€‰é¡¹é”™è¯¯ï¼Œæ²¡æœ‰è¯¥é€‰é¡¹çš„ç½‘å¡" << endl;
         pcap_freealldevs(alldevs);
         return -1;
     }
 
-    /*µ÷µ½Ñ¡ÖĞµÄÍø¿¨Éè±¸*/
+    /*è°ƒåˆ°é€‰ä¸­çš„ç½‘å¡è®¾å¤‡*/
     for (d = alldevs, j = 1; j != inum; j++, d = d->next) {
     }
 
-    /*¿ªÆôÉè±¸*/
+    /*å¼€å¯è®¾å¤‡*/
     if ((adhandle = pcap_open(d->name, 1000, PCAP_OPENFLAG_PROMISCUOUS, 100, NULL, errbuf)) == NULL) {
-        cout << "ÎŞ·¨¿ªÆôÉè±¸" << endl;
+        cout << "æ— æ³•å¼€å¯è®¾å¤‡" << endl;
         pcap_freealldevs(alldevs);
         return -1;
     } else if (pcap_datalink(adhandle) != DLT_EN10MB) {
-        cout << "²»ÊÇÒÔÌ«Íø£¬ÎŞ·¨Ê¹ÓÃ" << endl;
+        cout << "ä¸æ˜¯ä»¥å¤ªç½‘ï¼Œæ— æ³•ä½¿ç”¨" << endl;
         pcap_freealldevs(alldevs);
         return -1;
     }
@@ -124,11 +125,11 @@ int OpenIF() {
     return 1;
 }
 
-/*»ñÈ¡×Ô¼ºµÄÖ÷»úµÄIPµØÖ·ºÍMACµØÖ·*/
+/*è·å–è‡ªå·±çš„ä¸»æœºçš„IPåœ°å€å’ŒMACåœ°å€*/
 int GetSelfMac() {
     struct pcap_pkthdr* pkt_header;
     const u_char* pkt_data;
-    unsigned char sendbuf[42] = {0};  // ·¢ËÍ»º³åÇø£¬Ò²ÊÇarp°üµÄ´óĞ¡
+    unsigned char sendbuf[42] = {0};  // å‘é€ç¼“å†²åŒºï¼Œä¹Ÿæ˜¯arpåŒ…çš„å¤§å°
     int i = -1;
     int res;
     ethernet_head eh;
@@ -144,7 +145,7 @@ int GetSelfMac() {
     ah.protocol_type = htons(ETH_IP);
     ah.hardware_add_len = 6;
     ah.protocol_add_len = 4;
-    ah.source_ip_add = inet_addr("222.220.23.1");  //Ô´ipµØÖ·Î»ÈÎÒâµÄipµØÖ·
+    ah.source_ip_add = inet_addr("222.220.23.1");  //æºipåœ°å€ä½ä»»æ„çš„ipåœ°å€
     ah.operation_field = htons(ARP_REQUEST);
     ah.dest_ip_add = inet_addr("192.168.1.2");
 
@@ -155,16 +156,16 @@ int GetSelfMac() {
     memcpy(sendbuf + sizeof(eh) + 24, &ah.dest_ip_add, 4);
 
     if (pcap_sendpacket(adhandle, sendbuf, 42) == 0)
-        cout << "·¢ËÍarp°ü³É¹¦" << endl;
+        cout << "å‘é€arpåŒ…æˆåŠŸ" << endl;
     else
-        cout << "·¢ËÍarp°üÊ§°Ü" << GetLastError() << endl;
+        cout << "å‘é€arpåŒ…å¤±è´¥" << GetLastError() << endl;
 
-    //µÃµ½°üµÄ»Ø¸´
+    //å¾—åˆ°åŒ…çš„å›å¤
     while ((res = pcap_next_ex(adhandle, &pkt_header, &pkt_data)) > 0) {
         if (*(unsigned short*)(pkt_data + 12) == htons(ETH_ARP) &&
             *(unsigned short*)(pkt_data + 20) == htons(ARP_REPLY) &&
             *(unsigned long*)(pkt_data + 38) == inet_addr("222.220.23.1")) {
-            cout << "±¾»úÍø¿¨ÎïÀíµØÖ·£º";
+            cout << "æœ¬æœºç½‘å¡ç‰©ç†åœ°å€ï¼š";
             for (i = 0; i < 5; i++) {
                 selfMac[i] = *(unsigned char*)(pkt_data + 22 + i);
                 cout << selfMac[i];
@@ -178,10 +179,10 @@ int GetSelfMac() {
     }
 
     if (res == 0)
-        cout << "³¬Ê±£¡½ÓÊÕÍøÂç°ü³¬Ê±" << endl;
+        cout << "è¶…æ—¶ï¼æ¥æ”¶ç½‘ç»œåŒ…è¶…æ—¶" << endl;
 
     if (res == -1)
-        cout << "¶ÁÈ¡ÍøÂç°üÊ±´íÎó" << endl;
+        cout << "è¯»å–ç½‘ç»œåŒ…æ—¶é”™è¯¯" << endl;
 
     if (i == 6)
         return 1;
@@ -189,7 +190,7 @@ int GetSelfMac() {
         return 0;
 }
 
-//·¢ËÍarpÇëÇó
+//å‘é€arpè¯·æ±‚
 unsigned int _stdcall sendArpPacket(void* arglist) {
     unsigned char sendbuf[42];
     unsigned long ip;
@@ -221,9 +222,9 @@ unsigned int _stdcall sendArpPacket(void* arglist) {
             memcpy(sendbuf + sizeof(eh) + 24, &ah.dest_ip_add, 4);
 
             if (pcap_sendpacket(adhandle, sendbuf, 42) == 0) {
-                // cout << "·¢°ü³É¹¦" << endl;
+                // cout << "Send Pack Sucessed" << endl;
             } else
-                cout << "·¢°üÊ§°Ü" << GetLastError() << endl;
+                cout << "Send Pack Failed: " << GetLastError() << endl;
         }
     }
 
@@ -232,7 +233,7 @@ unsigned int _stdcall sendArpPacket(void* arglist) {
     return 1;
 }
 
-//½ÓÊÕARPÏàÓ¦½ø³Ì
+//æ¥æ”¶ARPç›¸åº”è¿›ç¨‹
 unsigned int _stdcall GetlivePc(void* arglist) {
     int res;
     int aliveNum = 0;
@@ -243,7 +244,7 @@ unsigned int _stdcall GetlivePc(void* arglist) {
 
     while (TRUE) {
         if (flag) {
-            cout << "É¨ÃèÍê±Ï£¬¼àÌı³ÌĞòÍË³ö" << endl;
+            cout << "Scanning finished, exit listening process." << endl;
             break;
         }
 
@@ -253,8 +254,8 @@ unsigned int _stdcall GetlivePc(void* arglist) {
 
                 recv->ah.source_ip_add = *(unsigned long*)(pkt_data + 28);
                 if (*(unsigned short*)(pkt_data + 20) == htons(ARP_REPLY)) {
-                    cout << "²¶»ñµ½µÄARP°ü£º";
-                    cout << "IPµØÖ·£º" << (unsigned long)(recv->ah.source_ip_add & 255)
+                    cout << "Catched ARP Packs: ";
+                    cout << "IP address: " << (unsigned long)(recv->ah.source_ip_add & 255)
                          << "." << (unsigned long)((recv->ah.source_ip_add >> 8) & 255)
                          << "." << (unsigned long)((recv->ah.source_ip_add >> 16) & 255)
                          << "." << (unsigned long)((recv->ah.source_ip_add >> 24) & 255)
@@ -263,7 +264,7 @@ unsigned int _stdcall GetlivePc(void* arglist) {
                     memcpy(pcGroup[aliveNum].mac, (pkt_data + 22), 6);
                     aliveNum++;
 
-                    cout << "MACµØÖ·£º";
+                    cout << "MAC address: ";
                     for (int i = 0; i < 6; i++) {
                         tempMac[i] = *((unsigned char*)(pkt_data + 22 + i));
                         printf("%x-", tempMac[i]);
@@ -276,11 +277,11 @@ unsigned int _stdcall GetlivePc(void* arglist) {
 
     for (int j = 0; j < 255; j++) {
         if (pcGroup[j].ip != 0) {
-            cout << "IPµØÖ·£º" << (pcGroup[j].ip & 255) << "."
+            cout << "IP address: " << (pcGroup[j].ip & 255) << "."
                  << ((pcGroup[j].ip >> 8) & 255) << "."
                  << ((pcGroup[j].ip >> 16) & 255) << "."
                  << ((pcGroup[j].ip >> 24) & 255) << "         ";
-            printf("MACµØÖ·£º %2x - %2x - %2x - %2x - %2x - %2x\n", pcGroup[j].mac[0], pcGroup[j].mac[1], pcGroup[j].mac[2], pcGroup[j].mac[3], pcGroup[j].mac[4], pcGroup[j].mac[5]);
+            printf("MAC address: %2x - %2x - %2x - %2x - %2x - %2x\n", pcGroup[j].mac[0], pcGroup[j].mac[1], pcGroup[j].mac[2], pcGroup[j].mac[3], pcGroup[j].mac[4], pcGroup[j].mac[5]);
         }
     }
 
@@ -293,21 +294,21 @@ int main() {
     HANDLE hThread1, hThread2;
     string fip;
     string sip;
-    cout << "ÇëÊäÈëµÚÒ»¸öIP£º" << endl;
+    cout << "è¯·è¾“å…¥ç¬¬ä¸€ä¸ªIPï¼š" << endl;
     cin >> fip;
-    cout << "ÄãÊäÈëµÄµÚÒ»¸öIP£º" << fip << endl;
+    cout << "ä½ è¾“å…¥çš„ç¬¬ä¸€ä¸ªIPï¼š" << fip << endl;
 
-    cout << "ÇëÊäÈëµÚ¶ş¸öIP£º" << endl;
+    cout << "è¯·è¾“å…¥ç¬¬äºŒä¸ªIPï¼š" << endl;
     cin >> sip;
-    cout << "ÄãÊäÈëµÄµÚ¶ş¸öIP:" << sip << endl;
+    cout << "ä½ è¾“å…¥çš„ç¬¬äºŒä¸ªIP:" << sip << endl;
 
     cout << fip << endl;
     cout << sip << endl;
 
     firstip = inet_addr(fip.data());
     secondip = inet_addr(sip.data());
-    cout << "µÚÒ»¸öÍøÂçµØÖ·:" << firstip << endl;
-    cout << "µÚ¶ş¸öÍøÂçµØÖ·:" << secondip << endl;
+    cout << "ç¬¬ä¸€ä¸ªç½‘ç»œåœ°å€:" << firstip << endl;
+    cout << "ç¬¬äºŒä¸ªç½‘ç»œåœ°å€:" << secondip << endl;
 
     HostNum = htonl(secondip) - htonl(firstip) + 1;
     OpenIF();
