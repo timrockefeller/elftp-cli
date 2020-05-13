@@ -79,6 +79,7 @@ include_directories (
 )
 link_directories (
     ${PROJECT_SOURCE_DIR}/lib
+    ${PROJECT_SOURCE_DIR}/lib/x64
     # ${PROJECT_SOURCE_DIR}/lib/Gen
     # $ENV{XXX_LIB_PATH}
     # ...
