@@ -89,16 +89,15 @@ int main(int argc, char* argv[]) {
             // args[0] - relative directory = "."
             // 列出内容呗
 
-            char **data;
+            char *data;
             int size;
-            char* path;
+            char path[50];
             strcpy(path,args[0].c_str());
             SOCKET s = ArgHandle::getInstance()->getSocket();
             try{
-                FTPAPI::ftp_list(s,path,data,&size);
-                for(int i=0;i<sizeof(data);i++){
-                    cout<<data[i]<<endl;
-                }
+                FTPAPI::ftp_list(s,path,&data,&size);
+                data[size] = '\0';
+                cout<<data<<endl;
                 cout<<path<<endl;
             }catch (exception e){
                 cout << "Exit with exception: " << e.what() << endl;
