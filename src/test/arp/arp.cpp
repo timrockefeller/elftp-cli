@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <tchar.h>
-
 #include <iostream>
 #include <WinSock2.h>
 #define HAVE_REMOTE
@@ -13,7 +12,7 @@
 #include <windows.h>
 
 #include <string>
-#pragma pack(1)  // memory alignment
+#pragma pack(1)  // Memory Alignment
 
 using namespace std;
 
@@ -24,27 +23,27 @@ using namespace std;
 #define ARP_HARDWARE 0X0001
 #define max_num_adapter 10
 
-// arpÖ¡½á¹¹
+// Arp Frame Structure
 struct arp_head {
-    unsigned short hardware_type;     //Ó²¼þÀàÐÍ
-    unsigned short protocol_type;     //Ð­ÒéÀàÐÍ
-    unsigned char hardware_add_len;   //Ó²¼þµØÖ·³¤¶È
-    unsigned char protocol_add_len;   //Ð­ÒéµØÖ·³¤¶È
-    unsigned short operation_field;   //²Ù×÷×Ö¶Î
-    unsigned char source_mac_add[6];  //Ô´macµØÖ·
-    unsigned long source_ip_add;      //Ô´ipµØÖ·
-    unsigned char dest_mac_add[6];    //Ä¿µÄmacµØÖ·
-    unsigned long dest_ip_add;        //Ä¿µÄipµØÖ·
+    unsigned short hardware_type;     //Hardware Type
+    unsigned short protocol_type;     //Protocal Type
+    unsigned char hardware_add_len;   //Hardware Address Length
+    unsigned char protocol_add_len;   //Protocal Address Length
+    unsigned short operation_field;   //Operation Field
+    unsigned char source_mac_add[6];  //Source MAC Address
+    unsigned long source_ip_add;      //Source IP Address
+    unsigned char dest_mac_add[6];    //Target MAC Address
+    unsigned long dest_ip_add;        //Target IP Address
 };
 
-//ÒÔÌ«ÍøÖ¡
+//Etheret Frame
 struct ethernet_head {
     unsigned char dest_mac_add[6];
     unsigned char source_mac_add[6];
-    unsigned short type;  // Ö¡ÀàÐÍ
+    unsigned short type;  //Frame Type
 };
 
-// arpÊý¾Ý°ü
+//Arp Data Package
 struct arp_packet {
     ethernet_head eh;
     arp_head ah;
@@ -63,13 +62,13 @@ unsigned int HostNum = 0;
 int flag = FALSE;
 HANDLE mThread;
 
-//ÌáÊ¾ÐÅÏ¢
+//Alarming
 void warmMessage() {
-    std::cout << "Èç¹ûÄãÏëÒªÊ¹ÓÃÕâ¸ö³ÌÐò£¬Äã±ØÐë°²×°ÁËwinpcap" << std::endl;
+    std::cout << "You must install WinPcap if you want to launch this program." << std::endl;
     return;
 }
 
-//´ò¿ªÍø¿¨
+//Open Net Driver
 int OpenIF() {
     int j = 0;
     int inum = 0;
@@ -77,48 +76,67 @@ int OpenIF() {
     pcap_if_t* alldevs;
     pcap_if_t* d;
 
-    /*»ñÈ¡Íø¿¨ÁÐ±í*/
+    /*Get Net Driver List*/
     if (pcap_findalldevs_ex(PCAP_SRC_IF_STRING, NULL, &alldevs, errbuf) == -1) {
-        cout << "»ñÈ¡Íø¿¨ÁÐ±íÊ§°Ü" << endl;
+        cout << "Failed to get Net Driver." << endl;
         exit(1);
     }
 
-    /*´òÓ¡Íø¿¨ÐÅÏ¢*/
+    /*Print Net Field Message*/
     for (d = alldevs; d != NULL; d = d->next) {
         cout << ++j << "      " << d->name << endl;
         if (d->description)
             cout << d->description << endl;
         else
-            cout << "¸ÃÉè±¸Ã»ÓÐÃèÊö" << endl;
+            cout << "No discription for this device." << endl;
         cout << "\n\n"
              << endl;
     }
 
     if (j == 0) {
-        cout << "ÎÞ·¨ÕÒ´òÍø¿¨Éè±¸" << endl;
+        cout << "Cannot Find this Net Driver Device." << endl;
         return -1;
     }
 
-    cout << "ÇëÑ¡ÔñÍø¿¨Éè±¸:"
+<<<<<<< Updated upstream
+    cout << "Please choose Net Driver Device:"
          << "1-" << j << endl;
     cin >> inum;
     if (inum < 1 || inum > j) {
-        cout << "Ñ¡Ïî´íÎó£¬Ã»ÓÐ¸ÃÑ¡ÏîµÄÍø¿¨" << endl;
+        cout << "Wrong Option, No Net Driver Device for this option." << endl;
+=======
+    cout << "Please select a network card device:"
+         << "1-" << j << endl;
+    cin >> inum;
+    if (inum < 1 || inum > j) {
+        cout << "Wrong option, no network card for this option" << endl;
+>>>>>>> Stashed changes
         pcap_freealldevs(alldevs);
         return -1;
     }
 
-    /*µ÷µ½Ñ¡ÖÐµÄÍø¿¨Éè±¸*/
+<<<<<<< Updated upstream
     for (d = alldevs, j = 1; j != inum; j++, d = d->next) {
     }
 
-    /*¿ªÆôÉè±¸*/
+    /*å¼€å¯è®¾å¤‡*/
     if ((adhandle = pcap_open(d->name, 1000, PCAP_OPENFLAG_PROMISCUOUS, 100, NULL, errbuf)) == NULL) {
-        cout << "ÎÞ·¨¿ªÆôÉè±¸" << endl;
+        cout << "æ— æ³•å¼€å¯è®¾å¤‡" << endl;
         pcap_freealldevs(alldevs);
         return -1;
     } else if (pcap_datalink(adhandle) != DLT_EN10MB) {
-        cout << "²»ÊÇÒÔÌ«Íø£¬ÎÞ·¨Ê¹ÓÃ" << endl;
+        cout << "Unable to turn on the device" << endl;
+    /*Turn on the device*/
+    if ((adhandle = pcap_open(d->name, 1000, PCAP_OPENFLAG_PROMISCUOUS, 100, NULL, errbuf)) == NULL) {
+
+    }
+    for (d = alldevs, j = 1; j != inum; j++, d = d->next) {
+    /*Transfer to the selected network card device*/
+        pcap_freealldevs(alldevs);
+        return -1;
+    } else if (pcap_datalink(adhandle) != DLT_EN10MB) {
+        cout << "Not Ethernet, cannot be used" << endl;
+>>>>>>> Stashed changes
         pcap_freealldevs(alldevs);
         return -1;
     }
@@ -126,11 +144,15 @@ int OpenIF() {
     return 1;
 }
 
-/*»ñÈ¡×Ô¼ºµÄÖ÷»úµÄIPµØÖ·ºÍMACµØÖ·*/
+<<<<<<< Updated upstream
 int GetSelfMac() {
     struct pcap_pkthdr* pkt_header;
     const u_char* pkt_data;
-    unsigned char sendbuf[42] = {0};  // ·¢ËÍ»º³åÇø£¬Ò²ÊÇarp°üµÄ´óÐ¡
+    unsigned char sendbuf[42] = {0};  // Send buffer, also the size of arp packet
+    const u_char* pkt_data;
+    struct pcap_pkthdr* pkt_header;
+int GetSelfMac() {
+/*Get the IP address and MAC address of your own host*/
     int i = -1;
     int res;
     ethernet_head eh;
@@ -146,7 +168,7 @@ int GetSelfMac() {
     ah.protocol_type = htons(ETH_IP);
     ah.hardware_add_len = 6;
     ah.protocol_add_len = 4;
-    ah.source_ip_add = inet_addr("222.220.23.1");  //Ô´ipµØÖ·Î»ÈÎÒâµÄipµØÖ·
+    ah.source_ip_add = inet_addr("222.220.23.1");  //Source ip address bit arbitrary ip address
     ah.operation_field = htons(ARP_REQUEST);
     ah.dest_ip_add = inet_addr("192.168.1.2");
 
@@ -157,16 +179,20 @@ int GetSelfMac() {
     memcpy(sendbuf + sizeof(eh) + 24, &ah.dest_ip_add, 4);
 
     if (pcap_sendpacket(adhandle, sendbuf, 42) == 0)
-        cout << "·¢ËÍarp°ü³É¹¦" << endl;
+<<<<<<< Updated upstream
     else
-        cout << "·¢ËÍarp°üÊ§°Ü" << GetLastError() << endl;
+        cout << "å‘é€arpåŒ…å¤±è´¥" << GetLastError() << endl;
 
-    //µÃµ½°üµÄ»Ø¸´
+        cout << "Successfully sent arp packet" << endl;
+    else
+        cout << "Failed to send arp packet" << GetLastError() << endl;
+
+    //Get a reply
     while ((res = pcap_next_ex(adhandle, &pkt_header, &pkt_data)) > 0) {
         if (*(unsigned short*)(pkt_data + 12) == htons(ETH_ARP) &&
             *(unsigned short*)(pkt_data + 20) == htons(ARP_REPLY) &&
             *(unsigned long*)(pkt_data + 38) == inet_addr("222.220.23.1")) {
-            cout << "±¾»úÍø¿¨ÎïÀíµØÖ·£º";
+            cout << "Local network card physical address:";
             for (i = 0; i < 5; i++) {
                 selfMac[i] = *(unsigned char*)(pkt_data + 22 + i);
                 cout << selfMac[i];
@@ -180,10 +206,14 @@ int GetSelfMac() {
     }
 
     if (res == 0)
-        cout << "³¬Ê±£¡½ÓÊÕÍøÂç°ü³¬Ê±" << endl;
+<<<<<<< Updated upstream
 
     if (res == -1)
-        cout << "¶ÁÈ¡ÍøÂç°üÊ±´íÎó" << endl;
+        cout << "time out! Receive network packet timeout" << endl;
+
+    if (res == -1)
+        cout << "Error reading network packet" << endl;
+>>>>>>> Stashed changes
 
     if (i == 6)
         return 1;
@@ -191,7 +221,8 @@ int GetSelfMac() {
         return 0;
 }
 
-//·¢ËÍarpÇëÇó
+//Send arp request
+<<<<<<< Updated upstream
 unsigned int _stdcall sendArpPacket(void* arglist) {
     unsigned char sendbuf[42];
     unsigned long ip;
@@ -223,9 +254,9 @@ unsigned int _stdcall sendArpPacket(void* arglist) {
             memcpy(sendbuf + sizeof(eh) + 24, &ah.dest_ip_add, 4);
 
             if (pcap_sendpacket(adhandle, sendbuf, 42) == 0) {
-                // cout << "·¢°ü³É¹¦" << endl;
+                // cout << "Send Pack Sucessed" << endl;
             } else
-                cout << "·¢°üÊ§°Ü" << GetLastError() << endl;
+                cout << "Send Pack Failed: " << GetLastError() << endl;
         }
     }
 
@@ -234,7 +265,7 @@ unsigned int _stdcall sendArpPacket(void* arglist) {
     return 1;
 }
 
-//½ÓÊÕARPÏàÓ¦½ø³Ì
+//æŽ¥æ”¶ARPç›¸åº”è¿›ç¨‹
 unsigned int _stdcall GetlivePc(void* arglist) {
     int res;
     int aliveNum = 0;
@@ -245,7 +276,7 @@ unsigned int _stdcall GetlivePc(void* arglist) {
 
     while (TRUE) {
         if (flag) {
-            cout << "É¨ÃèÍê±Ï£¬¼àÌý³ÌÐòÍË³ö" << endl;
+            cout << "Scanning finished, exit listening process." << endl;
             break;
         }
 
@@ -255,8 +286,8 @@ unsigned int _stdcall GetlivePc(void* arglist) {
 
                 recv->ah.source_ip_add = *(unsigned long*)(pkt_data + 28);
                 if (*(unsigned short*)(pkt_data + 20) == htons(ARP_REPLY)) {
-                    cout << "²¶»ñµ½µÄARP°ü£º";
-                    cout << "IPµØÖ·£º" << (unsigned long)(recv->ah.source_ip_add & 255)
+                    cout << "Catched ARP Packs: ";
+                    cout << "IP address: " << (unsigned long)(recv->ah.source_ip_add & 255)
                          << "." << (unsigned long)((recv->ah.source_ip_add >> 8) & 255)
                          << "." << (unsigned long)((recv->ah.source_ip_add >> 16) & 255)
                          << "." << (unsigned long)((recv->ah.source_ip_add >> 24) & 255)
@@ -265,7 +296,7 @@ unsigned int _stdcall GetlivePc(void* arglist) {
                     memcpy(pcGroup[aliveNum].mac, (pkt_data + 22), 6);
                     aliveNum++;
 
-                    cout << "MACµØÖ·£º";
+                    cout << "MAC address: ";
                     for (int i = 0; i < 6; i++) {
                         tempMac[i] = *((unsigned char*)(pkt_data + 22 + i));
                         printf("%x-", tempMac[i]);
@@ -278,11 +309,11 @@ unsigned int _stdcall GetlivePc(void* arglist) {
 
     for (int j = 0; j < 255; j++) {
         if (pcGroup[j].ip != 0) {
-            cout << "IPµØÖ·£º" << (pcGroup[j].ip & 255) << "."
+            cout << "IP address: " << (pcGroup[j].ip & 255) << "."
                  << ((pcGroup[j].ip >> 8) & 255) << "."
                  << ((pcGroup[j].ip >> 16) & 255) << "."
                  << ((pcGroup[j].ip >> 24) & 255) << "         ";
-            printf("MACµØÖ·£º %2x - %2x - %2x - %2x - %2x - %2x\n", pcGroup[j].mac[0], pcGroup[j].mac[1], pcGroup[j].mac[2], pcGroup[j].mac[3], pcGroup[j].mac[4], pcGroup[j].mac[5]);
+            printf("MAC address: %2x - %2x - %2x - %2x - %2x - %2x\n", pcGroup[j].mac[0], pcGroup[j].mac[1], pcGroup[j].mac[2], pcGroup[j].mac[3], pcGroup[j].mac[4], pcGroup[j].mac[5]);
         }
     }
 
@@ -299,7 +330,7 @@ int main() {
     cin >> fip;
     cout << "Enter the 1st IP:" << fip << endl;
 
-    cout << "Please enter the second IP:£º" << endl;
+    cout << "Please enter the second IP:ï¿½ï¿½" << endl;
     cin >> sip;
     cout << "Enter the 2nd IP:" << sip << endl;
 
