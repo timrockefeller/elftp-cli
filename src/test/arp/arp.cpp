@@ -1,8 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <tchar.h>
 
 #include <iostream>
+#include <WinSock2.h>
 #define HAVE_REMOTE
 #include <pcap.h>
 #include <process.h>
@@ -293,21 +295,21 @@ int main() {
     HANDLE hThread1, hThread2;
     string fip;
     string sip;
-    cout << "请输入第一个IP：" << endl;
+    cout << "Please enter the first IP:" << endl;
     cin >> fip;
-    cout << "你输入的第一个IP：" << fip << endl;
+    cout << "Enter the 1st IP:" << fip << endl;
 
-    cout << "请输入第二个IP：" << endl;
+    cout << "Please enter the second IP:：" << endl;
     cin >> sip;
-    cout << "你输入的第二个IP:" << sip << endl;
+    cout << "Enter the 2nd IP:" << sip << endl;
 
     cout << fip << endl;
     cout << sip << endl;
 
     firstip = inet_addr(fip.data());
     secondip = inet_addr(sip.data());
-    cout << "第一个网络地址:" << firstip << endl;
-    cout << "第二个网络地址:" << secondip << endl;
+    cout << "First network address:" << firstip << endl;
+    cout << "Second network address:" << secondip << endl;
 
     HostNum = htonl(secondip) - htonl(firstip) + 1;
     OpenIF();
