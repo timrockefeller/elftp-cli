@@ -72,6 +72,7 @@ SET(EXECUTABLE_OUTPUT_PATH "${PROJECT_SOURCE_DIR}/bin") # 可执行文件输出�
 
 include_directories (
     ${PROJECT_SOURCE_DIR}/include
+    ${PROJECT_SOURCE_DIR}/include/winpcap
     # ${CMAKE_BINARY_DIR}/config
     # $ENV{XXX_INCLUDE_PATH}
     # ...
