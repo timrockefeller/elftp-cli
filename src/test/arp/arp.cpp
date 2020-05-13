@@ -98,30 +98,21 @@ int OpenIF() {
         return -1;
     }
 
-<<<<<<< Updated upstream
     cout << "Please choose Net Driver Device:"
          << "1-" << j << endl;
     cin >> inum;
     if (inum < 1 || inum > j) {
         cout << "Wrong Option, No Net Driver Device for this option." << endl;
-=======
-    cout << "Please select a network card device:"
-         << "1-" << j << endl;
-    cin >> inum;
-    if (inum < 1 || inum > j) {
-        cout << "Wrong option, no network card for this option" << endl;
->>>>>>> Stashed changes
         pcap_freealldevs(alldevs);
         return -1;
     }
 
-<<<<<<< Updated upstream
     for (d = alldevs, j = 1; j != inum; j++, d = d->next) {
     }
 
-    /*开启设备*/
+    /*Open Device*/
     if ((adhandle = pcap_open(d->name, 1000, PCAP_OPENFLAG_PROMISCUOUS, 100, NULL, errbuf)) == NULL) {
-        cout << "无法开启设备" << endl;
+        cout << "Cannot open device." << endl;
         pcap_freealldevs(alldevs);
         return -1;
     } else if (pcap_datalink(adhandle) != DLT_EN10MB) {
@@ -136,7 +127,6 @@ int OpenIF() {
         return -1;
     } else if (pcap_datalink(adhandle) != DLT_EN10MB) {
         cout << "Not Ethernet, cannot be used" << endl;
->>>>>>> Stashed changes
         pcap_freealldevs(alldevs);
         return -1;
     }
@@ -144,7 +134,6 @@ int OpenIF() {
     return 1;
 }
 
-<<<<<<< Updated upstream
 int GetSelfMac() {
     struct pcap_pkthdr* pkt_header;
     const u_char* pkt_data;
@@ -181,7 +170,7 @@ int GetSelfMac() {
     if (pcap_sendpacket(adhandle, sendbuf, 42) == 0)
 <<<<<<< Updated upstream
     else
-        cout << "发送arp包失败" << GetLastError() << endl;
+        cout << "Failed to send ARP Pachage" << GetLastError() << endl;
 
         cout << "Successfully sent arp packet" << endl;
     else
@@ -265,7 +254,7 @@ unsigned int _stdcall sendArpPacket(void* arglist) {
     return 1;
 }
 
-//接收ARP相应进程
+//Get ARP related thread
 unsigned int _stdcall GetlivePc(void* arglist) {
     int res;
     int aliveNum = 0;
@@ -330,7 +319,7 @@ int main() {
     cin >> fip;
     cout << "Enter the 1st IP:" << fip << endl;
 
-    cout << "Please enter the second IP:��" << endl;
+    cout << "Please enter the second IP:" << endl;
     cin >> sip;
     cout << "Enter the 2nd IP:" << sip << endl;
 
