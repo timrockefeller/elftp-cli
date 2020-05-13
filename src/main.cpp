@@ -49,12 +49,12 @@ int main(int argc, char* argv[]) {
                 FTPAPI::ftp_quit(s);
             }
             char ip [16];
-            strcpy(ip,args[0].c_str());
+            strcpy(ip, args[0].c_str());
             char un [30];
-            strcpy(un,args[2].c_str());
+            strcpy(un, args[2].c_str());
             char pw [30];
-            strcpy(pw,args[3].c_str());
-            s = FTPAPI::ftp_connect(ip,atoi(args[1].c_str()),un,pw); //登录到FTP服务器
+            strcpy(pw, args[3].c_str());
+            s = FTPAPI::ftp_connect(ip, atoi(args[1].c_str()), un, pw); //登录到FTP服务器
             ArgHandle::getInstance()->setSocket(s);
         }, {"", "anonymous"})
         ->BindCommand("cd", 1, [&](vector<string> args) {
@@ -69,13 +69,13 @@ int main(int argc, char* argv[]) {
             //char current_dict[256] = "/";
             //_wgetcwd(current_dict,sizeof(current_dict));
             char cDict[1024] = "";
-            GetCurrentDirectory(1024,cDict);
+            GetCurrentDirectory(1024, cDict);
             std::string a = "";
             try{
                 a.assign(cDict);
                 a.append("\\");
                 a.append(args[0].c_str());
-                cout<<"LOCAL: GOTO -> "<<a.c_str()<<endl;
+                cout << "LOCAL: GOTO -> " << a.c_str() << endl;
                 SetCurrentDirectory(a.c_str());
             }
             catch (exception& e){
@@ -92,36 +92,24 @@ int main(int argc, char* argv[]) {
             char *data;
             int size;
             char path[50];
-            strcpy(path,args[0].c_str());
+            strcpy(path, args[0].c_str());
             SOCKET s = ArgHandle::getInstance()->getSocket();
             try{
-                FTPAPI::ftp_list(s,path,&data,&size);
+                FTPAPI::ftp_list(s, path, &data, &size);
                 data[size] = '\0';
-                cout<<data<<endl;
-                cout<<path<<endl;
+                cout << data << endl;
+                cout << path << endl;
             }catch (exception e){
                 cout << "Exit with exception: " << e.what() << endl;
             }
-            
-            
-            // char command[60] = "";
-            // strcat(command,"ls ");
-            // strcat(command,args[0].c_str());
-            // try{
-            //     FTPAPI::ftp_sendcmd(s,command);
-            // }
-            // catch (exception& e){
-            //     cout << "Exit with exception: " << e.what() << endl;
-            // }
-
         }, {"."})
         ->BindCommand("lls", 1, [&](vector<string> args) {
             
             char command[1024] = "";
-            strcat(command,"ls ");
-            strcat(command,args[0].c_str());
+            strcat(command, "ls ");
+            strcat(command, args[0].c_str());
             //cout<<cDict<<endl;
-            cout<<"LOCAL: Content of Current Dictionary"<<endl;
+            cout << "LOCAL: Content of Current Dictionary" << endl;
             system(command);
 
         }, {"."})
@@ -130,13 +118,11 @@ int main(int argc, char* argv[]) {
             // 打印当前目录
             SOCKET s = ArgHandle::getInstance()->getSocket();
             if(s == 0){
-                cout<<"You haven't connect to server yet."<<endl;
+                cout << "You haven't connect to server yet." << endl;
             }else{
-                char* a;
-                strcpy(a,"pwd");
-                cout<<FTPAPI::ftp_sendcmd(s,a)<<endl;
                 char a[8];
                 strcpy(a, "pwd\r\n");
+                cout << FTPAPI::ftp_sendcmd(s, a) << endl;
             }
             // char command[60] = "";
             // strcat(command,"ls ");
@@ -147,8 +133,8 @@ int main(int argc, char* argv[]) {
             // TODO PWD相关
             // 打印当前目录
             char cDict[1024] = "";
-            GetCurrentDirectory(1024,cDict);
-            cout<<cDict<<endl;
+            GetCurrentDirectory(1024, cDict);
+            cout << cDict << endl;
         })
         ->BindCommand("get", 2, [&](vector<string> args) {
             // TODO RETR文件下载
