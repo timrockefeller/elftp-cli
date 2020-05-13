@@ -10,12 +10,14 @@
 #include <remote-ext.h>
 #include <stdio.h>
 #include <windows.h>
-
+#include <minwindef.h>
 #include <string>
 #pragma pack(1)  // Memory Alignment
 
-using namespace std;
-
+using std::cin;
+using std::cout;
+using std::string;
+using std::endl;
 #define ETH_IP 0X0800
 #define ETH_ARP 0X0806
 #define ARP_REQUEST 0X0001
