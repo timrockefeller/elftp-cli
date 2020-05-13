@@ -14,7 +14,11 @@
 #include <string>
 #pragma pack(1)  // Memory Alignment
 
-using namespace std;
+//using namespace std;
+using std::cout;
+using std::cin;
+using std::string;
+using std::endl;
 
 #define ETH_IP 0X0800
 #define ETH_ARP 0X0806
@@ -22,6 +26,18 @@ using namespace std;
 #define ARP_REPLY 0X0002
 #define ARP_HARDWARE 0X0001
 #define max_num_adapter 10
+
+//
+
+
+
+#define TRUE 1
+#define FALSE 0
+#define PCAP_ERRBUF_SIZE 256
+#define PCAP_SRC_IF_STRING "rpcap://"
+#define PCAP_OPENFLAG_PROMISCUOUS 1
+#define PCAP_OPENFLAG_DATATX_UDP 2
+#define DLT_EN10MB	1
 
 // Arp Frame Structure
 struct arp_head {
@@ -189,8 +205,7 @@ int GetSelfMac() {
 }
 
 //Send arp request
-unsigned int _stdcall sendArpPacket(void* arglist)
-{
+unsigned int _stdcall sendArpPacket(void* arglist){
 	unsigned char sendbuf[42];
 	unsigned long ip;
 	const char iptosendh[20] = {0};
