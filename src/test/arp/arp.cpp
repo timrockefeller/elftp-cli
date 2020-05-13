@@ -10,7 +10,7 @@
 #include <remote-ext.h>
 #include <stdio.h>
 #include <windows.h>
-
+#include <minwindef.h>
 #include <string>
 #pragma pack(1)  // Memory Alignment
 
