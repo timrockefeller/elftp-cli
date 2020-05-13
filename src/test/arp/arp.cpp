@@ -116,16 +116,6 @@ int OpenIF() {
         pcap_freealldevs(alldevs);
         return -1;
     } else if (pcap_datalink(adhandle) != DLT_EN10MB) {
-        cout << "Unable to turn on the device" << endl;
-    /*Turn on the device*/
-    if ((adhandle = pcap_open(d->name, 1000, PCAP_OPENFLAG_PROMISCUOUS, 100, NULL, errbuf)) == NULL) {
-
-    }
-    for (d = alldevs, j = 1; j != inum; j++, d = d->next) {
-    /*Transfer to the selected network card device*/
-        pcap_freealldevs(alldevs);
-        return -1;
-    } else if (pcap_datalink(adhandle) != DLT_EN10MB) {
         cout << "Not Ethernet, cannot be used" << endl;
         pcap_freealldevs(alldevs);
         return -1;
@@ -133,15 +123,11 @@ int OpenIF() {
 
     return 1;
 }
-
+/*Get the IP address and MAC address of your own host*/
 int GetSelfMac() {
     struct pcap_pkthdr* pkt_header;
     const u_char* pkt_data;
     unsigned char sendbuf[42] = {0};  // Send buffer, also the size of arp packet
-    const u_char* pkt_data;
-    struct pcap_pkthdr* pkt_header;
-int GetSelfMac() {
-/*Get the IP address and MAC address of your own host*/
     int i = -1;
     int res;
     ethernet_head eh;
@@ -168,9 +154,6 @@ int GetSelfMac() {
     memcpy(sendbuf + sizeof(eh) + 24, &ah.dest_ip_add, 4);
 
     if (pcap_sendpacket(adhandle, sendbuf, 42) == 0)
-    else
-        cout << "Failed to send ARP Pachage" << GetLastError() << endl;
-
         cout << "Successfully sent arp packet" << endl;
     else
         cout << "Failed to send arp packet" << GetLastError() << endl;
@@ -194,8 +177,6 @@ int GetSelfMac() {
     }
 
     if (res == 0)
-
-    if (res == -1)
         cout << "time out! Receive network packet timeout" << endl;
 
     if (res == -1)
@@ -208,46 +189,51 @@ int GetSelfMac() {
 }
 
 //Send arp request
-unsigned int _stdcall sendArpPacket(void* arglist) {
-    unsigned char sendbuf[42];
-    unsigned long ip;
-    const char iptosendh[20] = {0};
-    ethernet_head eh;
-    arp_head ah;
+unsigned int _stdcall sendArpPacket(void* arglist)
+{
+	unsigned char sendbuf[42];
+	unsigned long ip;
+	const char iptosendh[20] = {0};
+	ethernet_head eh;
+	arp_head ah;
 
-    memset(eh.dest_mac_add, 0xff, 6);
-    memcpy(eh.source_mac_add, selfMac, 6);
-    memcpy(ah.source_mac_add, selfMac, 6);
-    memset(ah.source_mac_add, 0x00, 6);
+	memset(eh.dest_mac_add, 0xff, 6);
+	memcpy(eh.source_mac_add, selfMac, 6);
+	memcpy(ah.source_mac_add, selfMac, 6);
+	memset(ah.source_mac_add, 0x00, 6);
 
-    eh.type = htons(ETH_ARP);
-    ah.hardware_type = htons(ARP_HARDWARE);
-    ah.protocol_type = htons(ETH_IP);
-    ah.hardware_add_len = 6;
-    ah.protocol_add_len = 4;
-    ah.operation_field = htons(ARP_REQUEST);
-    ah.source_ip_add = myip;
+	eh.type = htons(ETH_ARP);
+	ah.hardware_type = htons(ARP_HARDWARE);
+	ah.protocol_type = htons(ETH_IP);
+	ah.hardware_add_len = 6;
+	ah.protocol_add_len = 4;
+	ah.operation_field = htons(ARP_REQUEST);
+	ah.source_ip_add = myip;
 
-    for (unsigned long i = 0; i < HostNum; i++) {
-        for (unsigned long j = 0; j < 1; j++) {
-            ip = firstip;
-            ah.dest_ip_add = htonl(htonl(ip) + i);
-            memset(sendbuf, 0, sizeof(sendbuf));
-            memcpy(sendbuf, &eh, sizeof(eh));
-            memcpy(sendbuf + sizeof(eh), &ah, 14);
-            memcpy(sendbuf + sizeof(eh) + 14, &ah.source_ip_add, 10);
-            memcpy(sendbuf + sizeof(eh) + 24, &ah.dest_ip_add, 4);
+	for (unsigned long i = 0; i < HostNum; i++)
+	{
+		for (unsigned long j = 0; j < 1; j++)
+		{
+			ip = firstip;
+			ah.dest_ip_add = htonl(htonl(ip) + i);
+			memset(sendbuf, 0, sizeof(sendbuf));
+			memcpy(sendbuf, &eh, sizeof(eh));
+			memcpy(sendbuf + sizeof(eh), &ah, 14);
+			memcpy(sendbuf + sizeof(eh) + 14, &ah.source_ip_add, 10);
+			memcpy(sendbuf + sizeof(eh) + 24, &ah.dest_ip_add, 4);
 
-            if (pcap_sendpacket(adhandle, sendbuf, 42) == 0) {
-                // cout << "Send Pack Sucessed" << endl;
-            } else
-                cout << "Send Pack Failed: " << GetLastError() << endl;
-        }
-    }
+			if (pcap_sendpacket(adhandle, sendbuf, 42) == 0)
+			{
+				//cout << "Send pack sucess." << endl;
+			}
+			else
+				cout << "Send pack failed. " << GetLastError() << endl;
+		}
+	}
 
-    Sleep(1000);
-    flag = TRUE;
-    return 1;
+	Sleep(1000);
+	flag = TRUE;
+	return 1;
 }
 
 //Get ARP related thread
