@@ -120,9 +120,7 @@ int main(int argc, char* argv[]) {
             if(s == 0){
                 cout << "You haven't connect to server yet." << endl;
             }else{
-                char a[8];
-                strcpy(a, "pwd\r\n");
-                cout << FTPAPI::ftp_sendcmd(s, a) << endl;
+                cout << FTPAPI::ftp_sendcmd(s, "pwd\r\n") << endl;
             }
             // char command[60] = "";
             // strcat(command,"ls ");
