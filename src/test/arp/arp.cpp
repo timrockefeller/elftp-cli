@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <tchar.h>
-
 #include <iostream>
 #include <WinSock2.h>
 #define HAVE_REMOTE
@@ -98,16 +98,24 @@ int OpenIF() {
         return -1;
     }
 
+<<<<<<< Updated upstream
     cout << "Please choose Net Driver Device:"
          << "1-" << j << endl;
     cin >> inum;
     if (inum < 1 || inum > j) {
         cout << "Wrong Option, No Net Driver Device for this option." << endl;
+=======
+    cout << "Please select a network card device:"
+         << "1-" << j << endl;
+    cin >> inum;
+    if (inum < 1 || inum > j) {
+        cout << "Wrong option, no network card for this option" << endl;
+>>>>>>> Stashed changes
         pcap_freealldevs(alldevs);
         return -1;
     }
 
-    /*调到选中的网卡设备*/
+<<<<<<< Updated upstream
     for (d = alldevs, j = 1; j != inum; j++, d = d->next) {
     }
 
@@ -117,7 +125,18 @@ int OpenIF() {
         pcap_freealldevs(alldevs);
         return -1;
     } else if (pcap_datalink(adhandle) != DLT_EN10MB) {
-        cout << "不是以太网，无法使用" << endl;
+        cout << "Unable to turn on the device" << endl;
+    /*Turn on the device*/
+    if ((adhandle = pcap_open(d->name, 1000, PCAP_OPENFLAG_PROMISCUOUS, 100, NULL, errbuf)) == NULL) {
+
+    }
+    for (d = alldevs, j = 1; j != inum; j++, d = d->next) {
+    /*Transfer to the selected network card device*/
+        pcap_freealldevs(alldevs);
+        return -1;
+    } else if (pcap_datalink(adhandle) != DLT_EN10MB) {
+        cout << "Not Ethernet, cannot be used" << endl;
+>>>>>>> Stashed changes
         pcap_freealldevs(alldevs);
         return -1;
     }
@@ -125,11 +144,15 @@ int OpenIF() {
     return 1;
 }
 
-/*获取自己的主机的IP地址和MAC地址*/
+<<<<<<< Updated upstream
 int GetSelfMac() {
     struct pcap_pkthdr* pkt_header;
     const u_char* pkt_data;
-    unsigned char sendbuf[42] = {0};  // 发送缓冲区，也是arp包的大小
+    unsigned char sendbuf[42] = {0};  // Send buffer, also the size of arp packet
+    const u_char* pkt_data;
+    struct pcap_pkthdr* pkt_header;
+int GetSelfMac() {
+/*Get the IP address and MAC address of your own host*/
     int i = -1;
     int res;
     ethernet_head eh;
@@ -145,7 +168,7 @@ int GetSelfMac() {
     ah.protocol_type = htons(ETH_IP);
     ah.hardware_add_len = 6;
     ah.protocol_add_len = 4;
-    ah.source_ip_add = inet_addr("222.220.23.1");  //源ip地址位任意的ip地址
+    ah.source_ip_add = inet_addr("222.220.23.1");  //Source ip address bit arbitrary ip address
     ah.operation_field = htons(ARP_REQUEST);
     ah.dest_ip_add = inet_addr("192.168.1.2");
 
@@ -156,16 +179,20 @@ int GetSelfMac() {
     memcpy(sendbuf + sizeof(eh) + 24, &ah.dest_ip_add, 4);
 
     if (pcap_sendpacket(adhandle, sendbuf, 42) == 0)
-        cout << "发送arp包成功" << endl;
+<<<<<<< Updated upstream
     else
         cout << "发送arp包失败" << GetLastError() << endl;
 
-    //得到包的回复
+        cout << "Successfully sent arp packet" << endl;
+    else
+        cout << "Failed to send arp packet" << GetLastError() << endl;
+
+    //Get a reply
     while ((res = pcap_next_ex(adhandle, &pkt_header, &pkt_data)) > 0) {
         if (*(unsigned short*)(pkt_data + 12) == htons(ETH_ARP) &&
             *(unsigned short*)(pkt_data + 20) == htons(ARP_REPLY) &&
             *(unsigned long*)(pkt_data + 38) == inet_addr("222.220.23.1")) {
-            cout << "本机网卡物理地址：";
+            cout << "Local network card physical address:";
             for (i = 0; i < 5; i++) {
                 selfMac[i] = *(unsigned char*)(pkt_data + 22 + i);
                 cout << selfMac[i];
@@ -179,10 +206,14 @@ int GetSelfMac() {
     }
 
     if (res == 0)
-        cout << "超时！接收网络包超时" << endl;
+<<<<<<< Updated upstream
 
     if (res == -1)
-        cout << "读取网络包时错误" << endl;
+        cout << "time out! Receive network packet timeout" << endl;
+
+    if (res == -1)
+        cout << "Error reading network packet" << endl;
+>>>>>>> Stashed changes
 
     if (i == 6)
         return 1;
@@ -190,7 +221,8 @@ int GetSelfMac() {
         return 0;
 }
 
-//发送arp请求
+//Send arp request
+<<<<<<< Updated upstream
 unsigned int _stdcall sendArpPacket(void* arglist) {
     unsigned char sendbuf[42];
     unsigned long ip;
