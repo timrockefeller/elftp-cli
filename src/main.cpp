@@ -89,20 +89,21 @@ int main(int argc, char* argv[]) {
             // args[0] - relative directory = "."
             // 列出内容呗
 
-            
+            char **data = new char *[1024];
+            int size;
+            char* path;
+            strcpy(path,args[0].c_str());
             SOCKET s = ArgHandle::getInstance()->getSocket();
-            char command[60] = "";
-            strcat(command,"ls ");
-            strcat(command,args[0].c_str());
-            //FTPAPI::ftp_sendcmd_re(s,command,"In current Dictionary:\n",1024);
-            // int* p;
-            // *p = 1025;
-            try{
-                FTPAPI::ftp_sendcmd(s,command);
-            }
-            catch (exception& e){
-                cout << "Exit with exception: " << e.what() << endl;
-            }
+            FTPAPI::ftp_list(s,path,data,&size);
+            // char command[60] = "";
+            // strcat(command,"ls ");
+            // strcat(command,args[0].c_str());
+            // try{
+            //     FTPAPI::ftp_sendcmd(s,command);
+            // }
+            // catch (exception& e){
+            //     cout << "Exit with exception: " << e.what() << endl;
+            // }
 
         }, {"."})
         ->BindCommand("lls", 1, [&](vector<string> args) {
