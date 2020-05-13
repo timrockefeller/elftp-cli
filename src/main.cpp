@@ -135,6 +135,8 @@ int main(int argc, char* argv[]) {
                 char* a;
                 strcpy(a,"pwd");
                 cout<<FTPAPI::ftp_sendcmd(s,a)<<endl;
+                char a[8];
+                strcpy(a, "pwd\r\n");
             }
             // char command[60] = "";
             // strcat(command,"ls ");
