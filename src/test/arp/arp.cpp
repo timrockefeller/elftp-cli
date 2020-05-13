@@ -168,7 +168,6 @@ int GetSelfMac() {
     memcpy(sendbuf + sizeof(eh) + 24, &ah.dest_ip_add, 4);
 
     if (pcap_sendpacket(adhandle, sendbuf, 42) == 0)
-<<<<<<< Updated upstream
     else
         cout << "Failed to send ARP Pachage" << GetLastError() << endl;
 
@@ -195,14 +194,12 @@ int GetSelfMac() {
     }
 
     if (res == 0)
-<<<<<<< Updated upstream
 
     if (res == -1)
         cout << "time out! Receive network packet timeout" << endl;
 
     if (res == -1)
         cout << "Error reading network packet" << endl;
->>>>>>> Stashed changes
 
     if (i == 6)
         return 1;
@@ -211,7 +208,6 @@ int GetSelfMac() {
 }
 
 //Send arp request
-<<<<<<< Updated upstream
 unsigned int _stdcall sendArpPacket(void* arglist) {
     unsigned char sendbuf[42];
     unsigned long ip;
