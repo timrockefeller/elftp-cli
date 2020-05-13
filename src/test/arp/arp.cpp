@@ -3,6 +3,7 @@
 #include <tchar.h>
 
 #include <iostream>
+#include <WinSock2.h>
 #define HAVE_REMOTE
 #include <pcap.h>
 #include <process.h>
@@ -106,17 +107,17 @@ int OpenIF() {
         return -1;
     }
 
-    /*����ѡ�е������豸*/
+    /*调到选中的网卡设备*/
     for (d = alldevs, j = 1; j != inum; j++, d = d->next) {
     }
 
-    /*�����豸*/
+    /*开启设备*/
     if ((adhandle = pcap_open(d->name, 1000, PCAP_OPENFLAG_PROMISCUOUS, 100, NULL, errbuf)) == NULL) {
-        cout << "�޷������豸" << endl;
+        cout << "无法开启设备" << endl;
         pcap_freealldevs(alldevs);
         return -1;
     } else if (pcap_datalink(adhandle) != DLT_EN10MB) {
-        cout << "������̫�����޷�ʹ��" << endl;
+        cout << "不是以太网，无法使用" << endl;
         pcap_freealldevs(alldevs);
         return -1;
     }
@@ -124,11 +125,11 @@ int OpenIF() {
     return 1;
 }
 
-/*��ȡ�Լ���������IP��ַ��MAC��ַ*/
+/*获取自己的主机的IP地址和MAC地址*/
 int GetSelfMac() {
     struct pcap_pkthdr* pkt_header;
     const u_char* pkt_data;
-    unsigned char sendbuf[42] = {0};  // ���ͻ�������Ҳ��arp���Ĵ�С
+    unsigned char sendbuf[42] = {0};  // 发送缓冲区，也是arp包的大小
     int i = -1;
     int res;
     ethernet_head eh;
@@ -144,7 +145,7 @@ int GetSelfMac() {
     ah.protocol_type = htons(ETH_IP);
     ah.hardware_add_len = 6;
     ah.protocol_add_len = 4;
-    ah.source_ip_add = inet_addr("222.220.23.1");  //Դip��ַλ�����ip��ַ
+    ah.source_ip_add = inet_addr("222.220.23.1");  //源ip地址位任意的ip地址
     ah.operation_field = htons(ARP_REQUEST);
     ah.dest_ip_add = inet_addr("192.168.1.2");
 
@@ -155,16 +156,16 @@ int GetSelfMac() {
     memcpy(sendbuf + sizeof(eh) + 24, &ah.dest_ip_add, 4);
 
     if (pcap_sendpacket(adhandle, sendbuf, 42) == 0)
-        cout << "����arp���ɹ�" << endl;
+        cout << "发送arp包成功" << endl;
     else
-        cout << "����arp��ʧ��" << GetLastError() << endl;
+        cout << "发送arp包失败" << GetLastError() << endl;
 
-    //�õ����Ļظ�
+    //得到包的回复
     while ((res = pcap_next_ex(adhandle, &pkt_header, &pkt_data)) > 0) {
         if (*(unsigned short*)(pkt_data + 12) == htons(ETH_ARP) &&
             *(unsigned short*)(pkt_data + 20) == htons(ARP_REPLY) &&
             *(unsigned long*)(pkt_data + 38) == inet_addr("222.220.23.1")) {
-            cout << "��������������ַ��";
+            cout << "本机网卡物理地址：";
             for (i = 0; i < 5; i++) {
                 selfMac[i] = *(unsigned char*)(pkt_data + 22 + i);
                 cout << selfMac[i];
@@ -178,10 +179,10 @@ int GetSelfMac() {
     }
 
     if (res == 0)
-        cout << "��ʱ�������������ʱ" << endl;
+        cout << "超时！接收网络包超时" << endl;
 
     if (res == -1)
-        cout << "��ȡ�����ʱ����" << endl;
+        cout << "读取网络包时错误" << endl;
 
     if (i == 6)
         return 1;
@@ -189,7 +190,7 @@ int GetSelfMac() {
         return 0;
 }
 
-//����arp����
+//发送arp请求
 unsigned int _stdcall sendArpPacket(void* arglist) {
     unsigned char sendbuf[42];
     unsigned long ip;
@@ -221,9 +222,9 @@ unsigned int _stdcall sendArpPacket(void* arglist) {
             memcpy(sendbuf + sizeof(eh) + 24, &ah.dest_ip_add, 4);
 
             if (pcap_sendpacket(adhandle, sendbuf, 42) == 0) {
-                // cout << "�����ɹ�" << endl;
+                // cout << "Send Pack Sucessed" << endl;
             } else
-                cout << "����ʧ��" << GetLastError() << endl;
+                cout << "Send Pack Failed: " << GetLastError() << endl;
         }
     }
 
@@ -232,7 +233,7 @@ unsigned int _stdcall sendArpPacket(void* arglist) {
     return 1;
 }
 
-//����ARP��Ӧ����
+//接收ARP相应进程
 unsigned int _stdcall GetlivePc(void* arglist) {
     int res;
     int aliveNum = 0;
@@ -243,7 +244,7 @@ unsigned int _stdcall GetlivePc(void* arglist) {
 
     while (TRUE) {
         if (flag) {
-            cout << "ɨ����ϣ����������˳�" << endl;
+            cout << "Scanning finished, exit listening process." << endl;
             break;
         }
 
@@ -253,8 +254,8 @@ unsigned int _stdcall GetlivePc(void* arglist) {
 
                 recv->ah.source_ip_add = *(unsigned long*)(pkt_data + 28);
                 if (*(unsigned short*)(pkt_data + 20) == htons(ARP_REPLY)) {
-                    cout << "���񵽵�ARP����";
-                    cout << "IP��ַ��" << (unsigned long)(recv->ah.source_ip_add & 255)
+                    cout << "Catched ARP Packs: ";
+                    cout << "IP address: " << (unsigned long)(recv->ah.source_ip_add & 255)
                          << "." << (unsigned long)((recv->ah.source_ip_add >> 8) & 255)
                          << "." << (unsigned long)((recv->ah.source_ip_add >> 16) & 255)
                          << "." << (unsigned long)((recv->ah.source_ip_add >> 24) & 255)
@@ -263,7 +264,7 @@ unsigned int _stdcall GetlivePc(void* arglist) {
                     memcpy(pcGroup[aliveNum].mac, (pkt_data + 22), 6);
                     aliveNum++;
 
-                    cout << "MAC��ַ��";
+                    cout << "MAC address: ";
                     for (int i = 0; i < 6; i++) {
                         tempMac[i] = *((unsigned char*)(pkt_data + 22 + i));
                         printf("%x-", tempMac[i]);
@@ -276,11 +277,11 @@ unsigned int _stdcall GetlivePc(void* arglist) {
 
     for (int j = 0; j < 255; j++) {
         if (pcGroup[j].ip != 0) {
-            cout << "IP��ַ��" << (pcGroup[j].ip & 255) << "."
+            cout << "IP address: " << (pcGroup[j].ip & 255) << "."
                  << ((pcGroup[j].ip >> 8) & 255) << "."
                  << ((pcGroup[j].ip >> 16) & 255) << "."
                  << ((pcGroup[j].ip >> 24) & 255) << "         ";
-            printf("MAC��ַ�� %2x - %2x - %2x - %2x - %2x - %2x\n", pcGroup[j].mac[0], pcGroup[j].mac[1], pcGroup[j].mac[2], pcGroup[j].mac[3], pcGroup[j].mac[4], pcGroup[j].mac[5]);
+            printf("MAC address: %2x - %2x - %2x - %2x - %2x - %2x\n", pcGroup[j].mac[0], pcGroup[j].mac[1], pcGroup[j].mac[2], pcGroup[j].mac[3], pcGroup[j].mac[4], pcGroup[j].mac[5]);
         }
     }
 
@@ -293,21 +294,21 @@ int main() {
     HANDLE hThread1, hThread2;
     string fip;
     string sip;
-    cout << "�������һ��IP��" << endl;
+    cout << "请输入第一个IP：" << endl;
     cin >> fip;
-    cout << "������ĵ�һ��IP��" << fip << endl;
+    cout << "你输入的第一个IP：" << fip << endl;
 
-    cout << "������ڶ���IP��" << endl;
+    cout << "请输入第二个IP：" << endl;
     cin >> sip;
-    cout << "������ĵڶ���IP:" << sip << endl;
+    cout << "你输入的第二个IP:" << sip << endl;
 
     cout << fip << endl;
     cout << sip << endl;
 
     firstip = inet_addr(fip.data());
     secondip = inet_addr(sip.data());
-    cout << "��һ�������ַ:" << firstip << endl;
-    cout << "�ڶ��������ַ:" << secondip << endl;
+    cout << "第一个网络地址:" << firstip << endl;
+    cout << "第二个网络地址:" << secondip << endl;
 
     HostNum = htonl(secondip) - htonl(firstip) + 1;
     OpenIF();
