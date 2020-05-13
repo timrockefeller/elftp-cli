@@ -64,10 +64,7 @@ int main(int argc, char* argv[]) {
 
         })
         ->BindCommand("lcd", 1, [&](vector<string> args) {
-            // TODO CWD相关
-            // 要分析 . 和 .. 还有相对目录问题，可能要一个静态类存这些东西
-            //char current_dict[256] = "/";
-            //_wgetcwd(current_dict,sizeof(current_dict));
+            // LCWD相关
             char cDict[1024] = "";
             GetCurrentDirectory(1024, cDict);
             std::string a = "";
@@ -82,13 +79,11 @@ int main(int argc, char* argv[]) {
                 cout<<"==WRONG PATH=="<<endl;
                 cout << "Exit with exception: " << e.what() << endl;
             }
-
         })
         ->BindCommand("ls", 1, [&](vector<string> args) {
-            // TODO LIST相关
+            // LIST相关
             // args[0] - relative directory = "."
             // 列出内容呗
-
             char *data;
             int size;
             char path[50];
@@ -104,17 +99,15 @@ int main(int argc, char* argv[]) {
             }
         }, {"."})
         ->BindCommand("lls", 1, [&](vector<string> args) {
-            
             char command[1024] = "";
             strcat(command, "ls ");
             strcat(command, args[0].c_str());
             //cout<<cDict<<endl;
             cout << "LOCAL: Content of Current Dictionary" << endl;
             system(command);
-
         }, {"."})
         ->BindCommand("pwd", 0, [&](vector<string> args) {
-            // TODO PWD相关
+            // PWD相关
             // 打印当前目录
             SOCKET s = ArgHandle::getInstance()->getSocket();
             if(s == 0){
@@ -122,23 +115,18 @@ int main(int argc, char* argv[]) {
             }else{
                 cout << FTPAPI::ftp_sendcmd(s, "pwd\r\n") << endl;
             }
-            // char command[60] = "";
-            // strcat(command,"ls ");
-            // strcat(command,args[0].c_str());
-            
         })
         ->BindCommand("lpwd", 0, [&](vector<string> args) {
-            // TODO PWD相关
+            // LPWD相关
             // 打印当前目录
             char cDict[1024] = "";
             GetCurrentDirectory(1024, cDict);
             cout << cDict << endl;
         })
         ->BindCommand("get", 2, [&](vector<string> args) {
-            // TODO RETR文件下载
+            // RETR文件下载
             // args[0] - source
-            // args[1] - target = "./" : 以"/"结尾意味着直接放入文件夹，其他情况就改名如何
-            // 也要处理一下目录问题
+            // args[1] - target = "./" : 以"/"结尾意味着直接放入文件夹，其他情况进行改名
             int size;
             char Sou[50];
             strcpy(Sou, args[0].c_str());
@@ -149,7 +137,7 @@ int main(int argc, char* argv[]) {
         }, {"./"});
     cout << "ELFTP " << VERSION << endl;
     
-    if (argc <= 1) {  // FIXME 是否考虑全局模式？
+    if (argc <= 1) {
         cout << " type \"help\" for more informations.\n" << endl;
         ArgHandle::getInstance()->ReadArgs(true);
     } else {
