@@ -25,6 +25,18 @@ using std::endl;
 #define ARP_HARDWARE 0X0001
 #define max_num_adapter 10
 
+//
+
+
+
+#define TRUE 1
+#define FALSE 0
+#define PCAP_ERRBUF_SIZE 256
+#define PCAP_SRC_IF_STRING "rpcap://"
+#define PCAP_OPENFLAG_PROMISCUOUS 1
+#define PCAP_OPENFLAG_DATATX_UDP 2
+#define DLT_EN10MB	1
+
 // Arp Frame Structure
 struct arp_head {
     unsigned short hardware_type;     //Hardware Type
@@ -191,8 +203,7 @@ int GetSelfMac() {
 }
 
 //Send arp request
-unsigned int _stdcall sendArpPacket(void* arglist)
-{
+unsigned int _stdcall sendArpPacket(void* arglist){
 	unsigned char sendbuf[42];
 	unsigned long ip;
 	const char iptosendh[20] = {0};
