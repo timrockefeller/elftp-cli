@@ -62,9 +62,9 @@ int main(int argc, char* argv[]) {
             // 要分析 . 和 .. 还有相对目录问题，可能要一个静态类存这些东西
             //current_dict = 
             char dir[50];
-            strcpy(dir,args[0].c_str());
+            strcpy(dir, args[0].c_str());
             SOCKET s = ArgHandle::getInstance()->getSocket();
-            std::cout<<FTPAPI::ftp_cwd(s,dir);
+            FTPAPI::ftp_cwd(s, dir);
         })
         ->BindCommand("lcd", 1, [&](vector<string> args) {
             // LCWD相关
