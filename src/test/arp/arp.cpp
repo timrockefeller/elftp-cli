@@ -204,24 +204,28 @@ int GetSelfMac() {
 
 //Send arp request
 unsigned int __stdcall sendArpPacket(void* arglist){
-	unsigned char sendbuf[42];
-	unsigned long ip;
+    //ARP-Format
+    //Ehernetnet-Head = Target-MAC-6bits + Source-MAC-6bits + Frame-Type-2Bits
+    //ARP-Head = Hardware-type-2bits + 
+    //Protocal-len = Protocol-MAC-len-1bit + Protocol-IP-len-1bit + OP-Field
+	unsigned char sendbuf[42];//ARP-Format-Post in Ethernet-Frame
+	unsigned long ip;//IP-Address
 	const char iptosendh[20] = {0};
-	ethernet_head eh;
-	arp_head ah;
+	ethernet_head eh;//Ethernet-Head-14bits
+	arp_head ah;//ARP-Head-8bits
 
-	memset(eh.dest_mac_add, 0xff, 6);
-	memcpy(eh.source_mac_add, selfMac, 6);
-	memcpy(ah.source_mac_add, selfMac, 6);
-	memset(ah.source_mac_add, 0x00, 6);
+	memset(eh.dest_mac_add, 0xff, 6);//Target-MAC-6bits
+	memcpy(eh.source_mac_add, selfMac, 6);//Source-Mac-6bits to Ethernet-Head
+	memcpy(ah.source_mac_add, selfMac, 6);//Source-Mac-6bits to ARP-head
+	memset(ah.source_mac_add, 0x00, 6);//Source-Mac-bits to ARP-head
 
-	eh.type = htons(ETH_ARP);
-	ah.hardware_type = htons(ARP_HARDWARE);
-	ah.protocol_type = htons(ETH_IP);
-	ah.hardware_add_len = 6;
-	ah.protocol_add_len = 4;
-	ah.operation_field = htons(ARP_REQUEST);
-	ah.source_ip_add = myip;
+	eh.type = htons(ETH_ARP);//Frame-Type
+	ah.hardware_type = htons(ARP_HARDWARE);//2-bits
+	ah.protocol_type = htons(ETH_IP);//2-bits
+	ah.hardware_add_len = 6;//MAC-len-1bit
+	ah.protocol_add_len = 4;//IP-len-1bit
+	ah.operation_field = htons(ARP_REQUEST);//OP-Field
+	ah.source_ip_add = myip;//Source-IP
 
 	for (unsigned long i = 0; i < HostNum; i++)
 	{
@@ -235,7 +239,7 @@ unsigned int __stdcall sendArpPacket(void* arglist){
 			memcpy(sendbuf + sizeof(eh) + 14, &ah.source_ip_add, 10);
 			memcpy(sendbuf + sizeof(eh) + 24, &ah.dest_ip_add, 4);
 
-			if (pcap_sendpacket(adhandle, sendbuf, 42) == 0)
+			if (pcap_sendpacket(adhandle, sendbuf, 42) == 0)//POST
 			{
 				//cout << "Send pack sucess." << endl;
 			}
@@ -264,9 +268,9 @@ unsigned int __stdcall GetlivePc(void* arglist) {
             break;
         }
 
-        if ((res = pcap_next_ex(adhandle, &pkt_header, &pkt_data)) > 0) {
+        if ((res = pcap_next_ex(adhandle, &pkt_header, &pkt_data)) > 0) {//HAVE PACKAGE
             if (*(unsigned short*)(pkt_data + 12) == htons(ETH_ARP)) {
-                arp_packet* recv = (arp_packet*)pkt_data;
+                arp_packet* recv = (arp_packet*)pkt_data;//GET Raw Data Package
 
                 recv->ah.source_ip_add = *(unsigned long*)(pkt_data + 28);
                 if (*(unsigned short*)(pkt_data + 20) == htons(ARP_REPLY)) {
@@ -275,9 +279,9 @@ unsigned int __stdcall GetlivePc(void* arglist) {
                          << "." << (unsigned long)((recv->ah.source_ip_add >> 8) & 255)
                          << "." << (unsigned long)((recv->ah.source_ip_add >> 16) & 255)
                          << "." << (unsigned long)((recv->ah.source_ip_add >> 24) & 255)
-                         << "         ";
+                         << "         ";//GETIP
                     pcGroup[aliveNum].ip = *(unsigned long*)(pkt_data + 28);
-                    memcpy(pcGroup[aliveNum].mac, (pkt_data + 22), 6);
+                    memcpy(pcGroup[aliveNum].mac, (pkt_data + 22), 6);//GETMAC from GET
                     aliveNum++;
 
                     cout << "MAC address: ";
