@@ -1,12 +1,11 @@
-#include <stdafx.h>
-#include"iostream"
-#include "iomanip"
+#include <iostream>
+#include <iomanip>
 #define HAVE_REMOTE
 #include <pcap.h>
 #include <packet32.h>
 #include <ntddndis.h>
 #include <stdlib.h>
-#include "memory"
+#include <memory>
  
 #pragma pack(1)  //memory alignment
 #pragma comment(lib,"wpcap.lib")
@@ -210,7 +209,7 @@ void GetDevName(ULONG source_ip, ULONG dest_ip, PUCHAR dest_mac, USHORT flag)
  
  
 	//begin to send 
-	pcap_sendpacket(pcap, (UCHAR*)&arp_, sizeof(arp_));
+	pcap_sendpacket(pcap, (const int*)&arp_, sizeof(arp_));
  
 	
  
@@ -303,6 +302,3 @@ void GetLocalMac(UCHAR * _u_char,PCHAR _adapter)
 	free(poid_data_);
 	PacketCloseAdapter(lpadapter);
 }
-————————————————
-版权声明：本文为CSDN博主「登陆_注册_帮助」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
-原文链接：https://blog.csdn.net/qqqqqqqqqq1qqqqqqqqq/java/article/details/47341607
