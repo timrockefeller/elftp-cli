@@ -1,12 +1,19 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <tchar.h>
 #include <iostream>
-#include <iomanip>
+#include <WinSock2.h>
 #define HAVE_REMOTE
 #include <pcap.h>
 #include <packet32.h>
 #include <ntddndis.h>
-#include <stdlib.h>
+#include <windows.h>
+#include <windef.h>
 #include <memory>
- 
+#include <string>
+#include <iomanip>
+
 #pragma pack(1)  //memory alignment
 #pragma comment(lib,"wpcap.lib")
 #pragma comment(lib,"Packet.lib")
@@ -209,7 +216,7 @@ void GetDevName(ULONG source_ip, ULONG dest_ip, PUCHAR dest_mac, USHORT flag)
  
  
 	//begin to send 
-	pcap_sendpacket(pcap, (const int*)&arp_, sizeof(arp_));
+	pcap_sendpacket(pcap, (UCHAR*)&arp_, sizeof(arp_));
  
 	
  
